@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carters Cuisine | 3-Day Meal Prep & Delivery for SGU Students</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="top-bar">
+    <div class="brand">
+      <span class="brand-name">Carters Cuisine</span>
+      <span class="tag">Meal Prep & Delivery</span>
+    </div>
+    <nav class="main-nav" aria-label="Primary">
+      <a href="#home">Home</a>
+      <a href="#mission">Mission</a>
+      <a href="#menu">3-Day Menu</a>
+      <a href="#order">Order</a>
+      <a href="owner.html">Owner</a>
+      <a class="cta" href="tel:14734153871">Call to Order</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="hero">
+      <div class="hero-content">
+        <h1>3-Day Meal Prep Delivered to SGU Students</h1>
+        <p>Nutritious Caribbean plates prepped in small batches and dropped to campus. Order a three-day lineup, add extras, and keep your focus where it matters—on your studies.</p>
+        <div class="hero-actions">
+          <a class="btn" href="tel:14734153871">Tap to Order</a>
+          <a class="btn ghost" href="#menu">Preview This Cycle</a>
+          <a class="btn outline" href="survey.html">Take Survey Now &rarr;</a>
+        </div>
+        <dl class="hero-stats">
+          <div>
+            <dt>Prep Window</dt>
+            <dd>Monday • Wednesday • Friday</dd>
+          </div>
+          <div>
+            <dt>Cutoff</dt>
+            <dd>Place orders before 8 PM</dd>
+          </div>
+          <div>
+            <dt>Delivery</dt>
+            <dd>Campus & nearby housing</dd>
+          </div>
+        </dl>
+      </div>
+      <div class="hero-highlight">
+        <h2>Current 3-Day Drop</h2>
+        <p>Each cycle features three to five dishes. Pick your favorites, lock extras, and we handle the rest.</p>
+        <ul class="highlight-list">
+          <li>Cooked fresh daily for SGU students</li>
+          <li>Macros listed on every menu item</li>
+          <li>Flexible extras—customize every box</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="mission" class="mission">
+      <div class="section-heading">
+        <span class="eyebrow">Our Mission</span>
+        <h2>Brain Food that Fuels Grades</h2>
+      </div>
+      <div class="mission-content">
+        <p>Carters Cuisine started as a reliable food delivery service, and now we're doubling down on meal prep for SGU students who don't have the time to cook. We believe focused study sessions start with balanced meals, so every dish is portioned for energy, clarity, and value.</p>
+        <p>Order in convenient three-day blocks, stay on budget, and get nourishing food you actually look forward to eating.</p>
+      </div>
+    </section>
+
+    <section id="menu" class="menu">
+      <div class="section-heading">
+        <span class="eyebrow">Three-Day Menu</span>
+        <h2>This Cycle's Lineup</h2>
+      </div>
+      <div id="menu-schedule" class="menu-schedule" aria-live="polite"></div>
+      <div id="meal-grid" class="meal-grid" aria-live="polite"></div>
+      <p class="menu-note">Meals rotate every three days. Lock in your box early—quantities are limited so everything stays fresh.</p>
+    </section>
+
+    <!-- Owner Media Bank: Update image src/alt or duplicate <figure> blocks to add your own photos. -->
+    <section id="owner-media-bank" aria-hidden="true" hidden>
+      <figure>
+        <img data-meal-image="seafood-boil" src="https://images.unsplash.com/photo-1604908177522-4023f7ddc5b6?auto=format&fit=crop&w=800&q=80" alt="Garlic Butter Seafood Boil" />
+      </figure>
+      <figure>
+        <img data-meal-image="oil-down" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80" alt="Grenadian Oil Down Bowl" />
+      </figure>
+      <figure>
+        <img data-meal-image="jerk-chicken" src="https://images.unsplash.com/photo-1612874742237-6526221588e3?auto=format&fit=crop&w=800&q=80" alt="Jerk Chicken Power Plate" />
+      </figure>
+      <figure>
+        <img data-meal-image="veggie-bowl" src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?auto=format&fit=crop&w=800&q=80" alt="Island Veggie Nourish Bowl" />
+      </figure>
+      <figure>
+        <img data-meal-image="citrus-salmon" src="https://images.unsplash.com/photo-1449247709967-d4461a6a6103?auto=format&fit=crop&w=800&q=80" alt="Citrus Glazed Salmon" />
+      </figure>
+    </section>
+
+    <section class="highlight">
+      <div class="highlight-content">
+        <span class="eyebrow">Testimonials</span>
+        <h2>Fuelled Students, Real Results</h2>
+        <div id="testimonial-slider" class="testimonial-slider" aria-live="polite"></div>
+        <div id="testimonial-dots" class="testimonial-dots" role="tablist"></div>
+      </div>
+    </section>
+
+    <section id="order" class="order">
+      <div class="section-heading">
+        <span class="eyebrow">Order Process</span>
+        <h2>Carters Cuisine Order Flow</h2>
+      </div>
+      <div class="order-process">
+        <article class="order-step">
+          <span class="order-step-number">1</span>
+          <h3>Preview the drop</h3>
+          <p>Choose three to five dishes that fit your schedule and macros.</p>
+        </article>
+        <article class="order-step">
+          <span class="order-step-number">2</span>
+          <h3>Customize extras</h3>
+          <p>Add boosters, sides, and sauces to build your perfect box.</p>
+        </article>
+        <article class="order-step">
+          <span class="order-step-number">3</span>
+          <h3>Confirm & pay</h3>
+          <p>Review your summary, then send it via WhatsApp or call to finalize.</p>
+        </article>
+        <article class="order-step">
+          <span class="order-step-number">4</span>
+          <h3>Delivery or pickup</h3>
+          <p>We drop meals on campus or arrange pickup at your ideal time.</p>
+        </article>
+      </div>
+
+      <form id="order-form" class="order-form" novalidate>
+        <fieldset>
+          <legend>Build your three-day plan</legend>
+          <div class="form-grid">
+            <label class="field">
+              <span>Preferred start date</span>
+              <input type="date" id="start-date" name="start-date" required />
+            </label>
+            <label class="field">
+              <span>Delivery method</span>
+              <select id="delivery-method" name="delivery-method" required>
+                <option value="" disabled selected>Select one</option>
+                <option value="delivery">Delivery to campus</option>
+                <option value="pickup">Pickup</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Preferred contact</span>
+              <select id="contact-method" name="contact-method" required>
+                <option value="" disabled selected>Select one</option>
+                <option value="whatsapp">WhatsApp</option>
+                <option value="call">Phone call</option>
+                <option value="email">Email</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Contact details</span>
+              <input type="text" id="contact-info" name="contact-info" placeholder="e.g. WhatsApp +1 (473) 415-3871" required />
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Select dishes (3 to 5)</legend>
+          <div id="order-dishes" class="checkbox-grid" aria-live="polite"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Extras</legend>
+          <div id="extras-checkboxes" class="checkbox-grid" aria-live="polite"></div>
+          <p class="form-hint">Owners can update this list from the owner portal; new extras show up here automatically.</p>
+        </fieldset>
+
+        <p id="order-error" class="form-error" role="alert" hidden></p>
+
+        <fieldset>
+          <legend>Notes for the kitchen</legend>
+          <textarea id="order-notes" name="order-notes" rows="3" placeholder="List allergies, delivery instructions, or timing preferences."></textarea>
+        </fieldset>
+
+        <button type="submit" class="btn">Review Order Summary</button>
+      </form>
+
+      <div id="order-summary" class="order-summary" hidden>
+        <h3>Your order summary</h3>
+        <p class="order-summary-note">Copy the details below and send them through WhatsApp. We'll confirm with payment instructions.</p>
+        <pre id="order-summary-text"></pre>
+        <div class="order-summary-actions">
+          <a id="whatsapp-link" class="btn" target="_blank" rel="noopener">Send via WhatsApp</a>
+          <button id="order-summary-close" class="btn ghost" type="button">Make Changes</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonial-submit" id="share-testimonial">
+      <div class="section-heading">
+        <span class="eyebrow">Share Your Experience</span>
+        <h2>Add a Testimonial</h2>
+      </div>
+      <p class="testimonial-submit-copy">Tell fellow SGU students how Carters Cuisine keeps you fueled during lectures, labs, and late-night study sessions. Your note appears in the rotating testimonials above.</p>
+      <form id="testimonial-form" class="testimonial-form" novalidate>
+        <label class="field">
+          <span>Your name (optional)</span>
+          <input type="text" id="testimonial-name" name="testimonial-name" placeholder="e.g. Jordan, Term 2" maxlength="80" />
+        </label>
+        <label class="field">
+          <span>Your feedback</span>
+          <textarea id="testimonial-message" name="testimonial-message" rows="3" placeholder="Share what you loved about your meals" required maxlength="360"></textarea>
+        </label>
+        <p id="testimonial-error" class="form-error" role="alert" hidden></p>
+        <p id="testimonial-success" class="form-hint success" role="status" hidden></p>
+        <button type="submit" class="btn">Submit Testimonial</button>
+      </form>
+    </section>
+
+    <section class="cta-section" id="contact">
+      <div class="cta-card">
+        <h2>Ready to Lock Your Next Three-Day Plan?</h2>
+        <p>Message or call Kamal at <a href="tel:14734153871">+1 (473) 415-3871</a> and we'll confirm your order and delivery window.</p>
+        <a class="btn" href="tel:14734153871">Order Now</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© <span id="year"></span> Carters Cuisine. All rights reserved.</p>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carters Cuisine | SGU Student Food Survey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="survey-page">
+  <header class="top-bar">
+    <div class="brand">
+      <span class="brand-name">Carters Cuisine</span>
+      <span class="tag">SGU Student Survey</span>
+    </div>
+    <nav class="main-nav" aria-label="Survey navigation">
+      <a href="Carters.html">Back to Site</a>
+      <a href="#survey">Survey</a>
+      <a class="cta" href="tel:14734153871">Need Help?</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="survey-hero" id="survey-top">
+      <div class="section-heading">
+        <span class="eyebrow">Help Shape the Menu</span>
+        <h1>SGU Student Food Preferences & Health Survey</h1>
+      </div>
+      <p class="survey-intro">This quick survey helps us design meal prep plans and deliveries that fit SGU student schedules, taste buds, and nutrition goals. Answer as many questions as you like—everything is optional unless noted.</p>
+      <a class="btn" href="#survey">Start the Survey</a>
+    </section>
+
+    <section id="survey" class="survey">
+      <form class="survey-form">
+        <fieldset>
+          <legend>Section 1: General Information (Optional)</legend>
+          <div class="survey-group">
+            <span class="survey-label">Age</span>
+            <div class="option-grid">
+              <label><input type="checkbox" name="age" value="under-20" /> Under 20</label>
+              <label><input type="checkbox" name="age" value="20-24" /> 20–24</label>
+              <label><input type="checkbox" name="age" value="25-29" /> 25–29</label>
+              <label><input type="checkbox" name="age" value="30-plus" /> 30+</label>
+            </div>
+          </div>
+          <div class="survey-group">
+            <span class="survey-label">Gender</span>
+            <div class="option-grid">
+              <label><input type="checkbox" name="gender" value="male" /> Male</label>
+              <label><input type="checkbox" name="gender" value="female" /> Female</label>
+              <label><input type="checkbox" name="gender" value="prefer-not" /> Prefer not to say</label>
+            </div>
+          </div>
+          <div class="survey-group">
+            <span class="survey-label">Year at SGU</span>
+            <div class="option-grid">
+              <label><input type="checkbox" name="year" value="term-1" /> Term 1</label>
+              <label><input type="checkbox" name="year" value="term-2" /> Term 2</label>
+              <label><input type="checkbox" name="year" value="term-3" /> Term 3</label>
+              <label><input type="checkbox" name="year" value="clinical" /> Clinical Years</label>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Section 2: Eating Habits</legend>
+          <div class="survey-group">
+            <label class="survey-label">How many meals do you usually eat per day?</label>
+            <div class="option-grid">
+              <label><input type="radio" name="meals-per-day" value="1" /> 1</label>
+              <label><input type="radio" name="meals-per-day" value="2" /> 2</label>
+              <label><input type="radio" name="meals-per-day" value="3" /> 3</label>
+              <label><input type="radio" name="meals-per-day" value="4-plus" /> 4+</label>
+            </div>
+          </div>
+          <div class="survey-group">
+            <label class="survey-label">Do you usually cook, order food, or eat on campus?</label>
+            <div class="option-grid">
+              <label><input type="radio" name="primary-source" value="cook" /> Cook myself</label>
+              <label><input type="radio" name="primary-source" value="order" /> Order takeout/delivery</label>
+              <label><input type="radio" name="primary-source" value="campus" /> Eat at school cafeterias/food vendors</label>
+              <label><input type="radio" name="primary-source" value="mix" /> Mix of the above</label>
+            </div>
+          </div>
+          <div class="survey-group">
+            <label class="survey-label">How often do you eat out per week?</label>
+            <div class="option-grid">
+              <label><input type="radio" name="eat-out" value="rarely" /> Rarely (0–1 times)</label>
+              <label><input type="radio" name="eat-out" value="occasionally" /> Occasionally (2–3 times)</label>
+              <label><input type="radio" name="eat-out" value="frequently" /> Frequently (4–6 times)</label>
+              <label><input type="radio" name="eat-out" value="daily" /> Daily</label>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Section 3: Food Allergies & Restrictions</legend>
+          <div class="survey-group">
+            <label class="survey-label">Do you have any food allergies?</label>
+            <div class="option-grid">
+              <label><input type="radio" name="allergies" value="yes" /> Yes</label>
+              <label><input type="radio" name="allergies" value="no" /> No</label>
+            </div>
+            <label class="field">
+              <span>Allergies (if applicable)</span>
+              <input type="text" name="allergies-list" placeholder="List allergens here" />
+            </label>
+          </div>
+          <div class="survey-group">
+            <span class="survey-label">Do you follow any specific dietary lifestyle?</span>
+            <div class="option-grid">
+              <label><input type="checkbox" name="diet" value="vegetarian" /> Vegetarian</label>
+              <label><input type="checkbox" name="diet" value="vegan" /> Vegan</label>
+              <label><input type="checkbox" name="diet" value="pescatarian" /> Pescatarian</label>
+              <label><input type="checkbox" name="diet" value="halal" /> Halal</label>
+              <label><input type="checkbox" name="diet" value="gluten-free" /> Gluten-Free</label>
+              <label><input type="checkbox" name="diet" value="lactose-free" /> Lactose-Free</label>
+              <label><input type="checkbox" name="diet" value="other" /> Other</label>
+            </div>
+            <label class="field">
+              <span>If other, please specify</span>
+              <input type="text" name="diet-other" placeholder="Tell us about your dietary lifestyle" />
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Section 4: Food Preferences</legend>
+          <div class="survey-group">
+            <span class="survey-label">Which types of cuisine do you enjoy most? (Select all that apply)</span>
+            <div class="option-grid">
+              <label><input type="checkbox" name="cuisine" value="caribbean" /> Caribbean</label>
+              <label><input type="checkbox" name="cuisine" value="american" /> American</label>
+              <label><input type="checkbox" name="cuisine" value="asian" /> Asian (Chinese, Japanese, Thai, etc.)</label>
+              <label><input type="checkbox" name="cuisine" value="indian" /> Indian</label>
+              <label><input type="checkbox" name="cuisine" value="mediterranean" /> Mediterranean</label>
+              <label><input type="checkbox" name="cuisine" value="other" /> Other</label>
+            </div>
+            <label class="field">
+              <span>If other, please specify</span>
+              <input type="text" name="cuisine-other" placeholder="Tell us the cuisine" />
+            </label>
+          </div>
+          <div class="survey-group">
+            <label class="survey-label" for="go-to-meals">What are your top go-to meals/snacks as a student?</label>
+            <textarea id="go-to-meals" name="go-to-meals" rows="3" placeholder="Share your favorites"></textarea>
+          </div>
+          <div class="survey-group">
+            <span class="survey-label">Do you prefer:</span>
+            <div class="option-grid">
+              <label><input type="radio" name="meal-style" value="home-style" /> Home-style meals</label>
+              <label><input type="radio" name="meal-style" value="fast-food" /> Fast food</label>
+              <label><input type="radio" name="meal-style" value="healthy" /> Healthy/clean meals</label>
+              <label><input type="radio" name="meal-style" value="mix" /> A mix</label>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Section 5: Healthy Eating</legend>
+          <div class="survey-group">
+            <span class="survey-label">How important is healthy eating to you as a student?</span>
+            <div class="option-grid">
+              <label><input type="radio" name="healthy-importance" value="very" /> Very important</label>
+              <label><input type="radio" name="healthy-importance" value="somewhat" /> Somewhat important</label>
+              <label><input type="radio" name="healthy-importance" value="neutral" /> Neutral</label>
+              <label><input type="radio" name="healthy-importance" value="not" /> Not important</label>
+            </div>
+          </div>
+          <div class="survey-group">
+            <span class="survey-label">What types of healthy foods do you like best? (Select all that apply)</span>
+            <div class="option-grid">
+              <label><input type="checkbox" name="healthy-foods" value="fruits" /> Fresh fruits</label>
+              <label><input type="checkbox" name="healthy-foods" value="vegetables" /> Vegetables/salads</label>
+              <label><input type="checkbox" name="healthy-foods" value="smoothies" /> Smoothies/juices</label>
+              <label><input type="checkbox" name="healthy-foods" value="lean-proteins" /> Lean proteins (chicken, fish, tofu)</label>
+              <label><input type="checkbox" name="healthy-foods" value="whole-grains" /> Whole grains (quinoa, brown rice, oats)</label>
+              <label><input type="checkbox" name="healthy-foods" value="nuts-seeds" /> Nuts & seeds</label>
+              <label><input type="checkbox" name="healthy-foods" value="other" /> Other</label>
+            </div>
+            <label class="field">
+              <span>If other, please specify</span>
+              <input type="text" name="healthy-foods-other" placeholder="Healthy foods you enjoy" />
+            </label>
+          </div>
+          <div class="survey-group">
+            <span class="survey-label">What makes it challenging for you to eat healthy while at SGU?</span>
+            <div class="option-grid">
+              <label><input type="checkbox" name="healthy-challenges" value="cost" /> Cost of healthy food</label>
+              <label><input type="checkbox" name="healthy-challenges" value="availability" /> Limited availability on campus</label>
+              <label><input type="checkbox" name="healthy-challenges" value="time" /> Lack of time to cook
+              <label><input type="checkbox" name="healthy-challenges" value="convenience" /> Prefer convenience/fast food</label>
+              <label><input type="checkbox" name="healthy-challenges" value="other" /> Other</label>
+            </div>
+            <label class="field">
+              <span>If other, please share</span>
+              <input type="text" name="healthy-challenges-other" placeholder="Tell us the challenge" />
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Section 6: Final Thoughts</legend>
+          <div class="survey-group">
+            <label class="survey-label">If SGU or local vendors offered more student-friendly healthy meal options, would you be interested?</label>
+            <div class="option-grid">
+              <label><input type="radio" name="interest" value="yes" /> Yes</label>
+              <label><input type="radio" name="interest" value="no" /> No</label>
+              <label><input type="radio" name="interest" value="maybe" /> Maybe</label>
+            </div>
+          </div>
+          <div class="survey-group">
+            <label class="survey-label" for="meal-plan-preference">What kind of meal plan/service would you prefer as a student?</label>
+            <textarea id="meal-plan-preference" name="meal-plan-preference" rows="3" placeholder="Share how we can serve you best"></textarea>
+          </div>
+
+          <div class="survey-group">
+            <span class="survey-label">Which days would you prefer meal prep deliveries? (Select all that apply)</span>
+            <div class="option-grid option-grid--days">
+              <label><input type="checkbox" name="preferred-days" value="monday" /> Monday</label>
+              <label><input type="checkbox" name="preferred-days" value="tuesday" /> Tuesday</label>
+              <label><input type="checkbox" name="preferred-days" value="wednesday" /> Wednesday</label>
+              <label><input type="checkbox" name="preferred-days" value="thursday" /> Thursday</label>
+              <label><input type="checkbox" name="preferred-days" value="friday" /> Friday</label>
+              <label><input type="checkbox" name="preferred-days" value="saturday" /> Saturday</label>
+              <label><input type="checkbox" name="preferred-days" value="sunday" /> Sunday</label>
+            </div>
+          </div>
+
+          <div class="survey-group">
+            <label class="survey-label" for="day-ranking">Rank the days of the week for meal prep delivery (1 = most preferred, 7 = least preferred).</label>
+            <textarea id="day-ranking" name="day-ranking" rows="3" placeholder="Example: 1) Monday, 2) Wednesday, 3) Friday ..."></textarea>
+          </div>
+
+          <div class="survey-group">
+            <label class="survey-label">How many times a week would you like meal prep delivery?</label>
+            <div class="option-grid">
+              <label><input type="radio" name="delivery-frequency" value="1" /> 1 day</label>
+              <label><input type="radio" name="delivery-frequency" value="2" /> 2 days</label>
+              <label><input type="radio" name="delivery-frequency" value="3" /> 3 days</label>
+              <label><input type="radio" name="delivery-frequency" value="4" /> 4 days</label>
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="survey-actions">
+          <button type="submit" class="btn">Submit Survey</button>
+          <a class="btn ghost" href="Carters.html">Return to Homepage</a>
+        </div>
+        <p class="survey-footnote">Thanks for sharing your preferences! We use this feedback to fine-tune menus, plan delivery windows, and build healthier options for SGU students.</p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© <span id="year"></span> Carters Cuisine. All rights reserved.</p>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carters Cuisine | Owner Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="owner-page">
+  <header class="top-bar">
+    <div class="brand">
+      <span class="brand-name">Carters Cuisine</span>
+      <span class="tag">Owner Portal</span>
+    </div>
+    <nav class="main-nav" aria-label="Owner navigation">
+      <a href="Carters.html#home">Back to Site</a>
+      <a href="#owner-login">Login</a>
+      <a href="#owner-dashboard">Dashboard</a>
+      <a class="cta" href="tel:14734153871">Call Kitchen</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="owner-hero">
+      <div class="section-heading">
+        <span class="eyebrow">Carters Cuisine HQ</span>
+        <h1>Keep Meals, Extras, and Inventory on Point</h1>
+      </div>
+      <p class="owner-hero-copy">Use this secure dashboard to refresh the weekly meal photos, adjust extras, and update inventory levels before each three-day delivery cycle.</p>
+    </section>
+
+    <section id="owner-login" class="owner-login">
+      <div class="login-card">
+        <h2>Admin Login</h2>
+        <p>Enter your owner credentials to unlock the management tools. Credentials are stored locally on this device.</p>
+        <form id="owner-login-form" class="owner-login-form" novalidate>
+          <label class="field">
+            <span>Email</span>
+            <input type="email" id="owner-username" name="owner-username" placeholder="admin@carterscuisine.com" required />
+          </label>
+          <label class="field">
+            <span>Access PIN</span>
+            <input type="password" id="owner-password" name="owner-password" placeholder="Enter admin PIN" required />
+          </label>
+          <p id="owner-login-error" class="form-error" role="alert" hidden></p>
+          <button type="submit" class="btn">Unlock Dashboard</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="owner-dashboard" class="owner-dashboard" hidden>
+      <div class="owner-dashboard-header">
+        <div>
+          <span class="eyebrow">Owner Dashboard</span>
+          <h2>Manage Extras, Inventory, and Media</h2>
+        </div>
+        <button id="owner-logout" class="btn ghost" type="button">Log out</button>
+      </div>
+      <p class="owner-dashboard-copy">Update your add-ons, track stock levels, and note which photos are currently in rotation. Changes save automatically in this browser.</p>
+
+      <section class="owner-panel extras-manager">
+        <div class="section-heading">
+          <span class="eyebrow">Extras Manager</span>
+          <h3>Update Sides & Boosters Anytime</h3>
+        </div>
+        <p class="extras-copy">Add juices, sauces, and premium upgrades here. They appear instantly on the public order form.</p>
+        <form id="extra-form" class="extra-form">
+          <label class="field">
+            <span>Extra name</span>
+            <input type="text" id="extra-name" name="extra-name" placeholder="e.g. Ginger & Turmeric Shot" required />
+          </label>
+          <label class="field">
+            <span>Price (optional)</span>
+            <input type="number" id="extra-price" name="extra-price" min="0" step="0.01" placeholder="e.g. 6" />
+          </label>
+          <button type="submit" class="btn">Add Extra</button>
+        </form>
+        <ul id="extras-list" class="extras-list" aria-live="polite"></ul>
+      </section>
+
+      <section class="owner-panel inventory">
+        <div class="section-heading">
+          <span class="eyebrow">Inventory Snapshot</span>
+          <h3>Monitor Stock at a Glance</h3>
+        </div>
+        <p class="inventory-copy">Track proteins, produce, and pantry items in real time. Update counts after shopping or prep so you always know what to restock.</p>
+
+        <form id="inventory-form" class="inventory-form">
+          <label class="field">
+            <span>Item</span>
+            <input type="text" id="inventory-item" name="inventory-item" placeholder="e.g. Fresh Snapper" required />
+          </label>
+          <label class="field">
+            <span>On hand</span>
+            <input type="number" id="inventory-qty" name="inventory-qty" min="0" step="1" placeholder="e.g. 10" required />
+          </label>
+          <label class="field">
+            <span>Unit</span>
+            <input type="text" id="inventory-unit" name="inventory-unit" placeholder="lbs / trays / bottles" required />
+          </label>
+          <label class="field">
+            <span>Reorder point</span>
+            <input type="number" id="inventory-reorder" name="inventory-reorder" min="0" step="1" placeholder="e.g. 4" required />
+          </label>
+          <button type="submit" class="btn">Add Item</button>
+          <button id="inventory-reset" type="button" class="btn ghost">Reset to Defaults</button>
+        </form>
+
+        <div class="inventory-table-wrapper">
+          <table class="inventory-table">
+            <thead>
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col">On Hand</th>
+                <th scope="col">Unit</th>
+                <th scope="col">Reorder Point</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="actions">Adjust</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="owner-panel survey-settings">
+        <div class="section-heading">
+          <span class="eyebrow">Survey Responses</span>
+          <h3>Where Should Survey Submissions Go?</h3>
+        </div>
+        <p class="survey-settings-copy">Choose the email inbox that should receive completed survey exports or alerts. We'll surface this address when you hook the form into your collection tool.</p>
+        <form id="survey-email-form" class="survey-email-form">
+          <label class="field">
+            <span>Survey destination email</span>
+            <input type="email" id="survey-email" name="survey-email" placeholder="e.g. surveys@carterscuisine.com" required />
+          </label>
+          <div class="survey-email-actions">
+            <button type="submit" class="btn">Save Email</button>
+            <button id="survey-email-clear" type="button" class="btn ghost">Clear</button>
+          </div>
+          <p id="survey-email-status" class="form-hint" role="status" hidden></p>
+        </form>
+      </section>
+
+      <section class="owner-panel owner-media">
+        <div class="section-heading">
+          <span class="eyebrow">Menu Photos</span>
+          <h3>Swap Meal Images</h3>
+        </div>
+        <p class="owner-media-copy">Open <code>owner-media-bank</code> inside <code>Carters.html</code> to replace or add new meal pictures. Update the <code>data-meal-image</code> attribute to match the dish ID.</p>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© <span id="year"></span> Carters Cuisine. All rights reserved.</p>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
