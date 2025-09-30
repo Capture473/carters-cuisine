@@ -12,6 +12,7 @@
 <body class="owner-page">
   <header class="top-bar">
     <div class="brand">
+      <img class="site-logo" src="logo.png" alt="Carters Cuisine logo" />
       <span class="brand-name">Carters Cuisine</span>
       <span class="tag">Owner Portal</span>
     </div>
@@ -61,96 +62,266 @@
       </div>
       <p class="owner-dashboard-copy">Update your add-ons, track stock levels, and note which photos are currently in rotation. Changes save automatically in this browser.</p>
 
+      <section class="owner-panel menu-manager">
+        <details class="owner-accordion" open>
+          <summary>
+            <div class="section-heading">
+              <span class="eyebrow">Menu Manager</span>
+              <h3>Edit the Main Menu</h3>
+            </div>
+            <p class="owner-accordion-subtitle">Adjust the dishes powering the public three-day lineup.</p>
+          </summary>
+          <div class="owner-panel-body">
+            <p class="menu-manager-copy">Update dish names, descriptions, or macros. Saved changes sync instantly to the student-facing menu, schedule, and order form.</p>
+            <form id="meal-form" class="meal-form" novalidate>
+              <input type="hidden" id="meal-id" name="meal-id" />
+              <div class="meal-form-grid">
+                <label class="field">
+                  <span>Meal name</span>
+                  <input type="text" id="meal-name" name="meal-name" placeholder="e.g. Island Veggie Nourish Bowl" required />
+                </label>
+                <label class="field">
+                  <span>Day</span>
+                  <select id="meal-day" name="meal-day" required>
+                    <option value="" disabled selected>Select day</option>
+                    <option value="Day 1">Day 1</option>
+                    <option value="Day 2">Day 2</option>
+                    <option value="Day 3">Day 3</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Calories</span>
+                  <input type="number" id="meal-calories" name="meal-calories" min="0" step="10" placeholder="e.g. 640" required />
+                </label>
+                <label class="field">
+                  <span>Protein (g)</span>
+                  <input type="number" id="meal-protein" name="meal-protein" min="0" step="1" placeholder="e.g. 28" required />
+                </label>
+              </div>
+              <label class="field">
+                <span>Description</span>
+                <textarea id="meal-description" name="meal-description" rows="3" placeholder="Add context students will see on the site." required></textarea>
+              </label>
+              <label class="field">
+                <span>Image URL</span>
+                <input type="url" id="meal-image" name="meal-image" placeholder="https://images..." required />
+              </label>
+              <p id="meal-form-status" class="form-hint">Save to add a new meal or update one you're editing.</p>
+              <div class="meal-form-actions">
+                <button type="submit" class="btn">Save Meal</button>
+                <button type="button" id="meal-cancel-edit" class="btn ghost" hidden>Cancel Edit</button>
+              </div>
+            </form>
+            <ul id="meal-list" class="meal-list" aria-live="polite"></ul>
+            <div class="meal-reset-row">
+              <button id="meal-reset" type="button" class="btn ghost">Restore default lineup</button>
+            </div>
+          </div>
+        </details>
+      </section>
+
       <section class="owner-panel extras-manager">
-        <div class="section-heading">
-          <span class="eyebrow">Extras Manager</span>
-          <h3>Update Sides & Boosters Anytime</h3>
-        </div>
-        <p class="extras-copy">Add juices, sauces, and premium upgrades here. They appear instantly on the public order form.</p>
-        <form id="extra-form" class="extra-form">
-          <label class="field">
-            <span>Extra name</span>
-            <input type="text" id="extra-name" name="extra-name" placeholder="e.g. Ginger & Turmeric Shot" required />
-          </label>
-          <label class="field">
-            <span>Price (optional)</span>
-            <input type="number" id="extra-price" name="extra-price" min="0" step="0.01" placeholder="e.g. 6" />
-          </label>
-          <button type="submit" class="btn">Add Extra</button>
-        </form>
-        <ul id="extras-list" class="extras-list" aria-live="polite"></ul>
+        <details class="owner-accordion" open>
+          <summary>
+            <div class="section-heading">
+              <span class="eyebrow">Extras Manager</span>
+              <h3>Update Sides & Boosters Anytime</h3>
+            </div>
+            <p class="owner-accordion-subtitle">Keep add-ons in sync with the order form.</p>
+          </summary>
+          <div class="owner-panel-body">
+            <p class="extras-copy">Add juices, sauces, and premium upgrades here. They appear instantly on the public order form.</p>
+            <form id="extra-form" class="extra-form">
+              <label class="field">
+                <span>Extra name</span>
+                <input type="text" id="extra-name" name="extra-name" placeholder="e.g. Ginger & Turmeric Shot" required />
+              </label>
+              <label class="field">
+                <span>Price (optional)</span>
+                <input type="number" id="extra-price" name="extra-price" min="0" step="0.01" placeholder="e.g. 6" />
+              </label>
+              <button type="submit" class="btn">Add Extra</button>
+            </form>
+            <ul id="extras-list" class="extras-list" aria-live="polite"></ul>
+          </div>
+        </details>
       </section>
 
       <section class="owner-panel inventory">
-        <div class="section-heading">
-          <span class="eyebrow">Inventory Snapshot</span>
-          <h3>Monitor Stock at a Glance</h3>
-        </div>
-        <p class="inventory-copy">Track proteins, produce, and pantry items in real time. Update counts after shopping or prep so you always know what to restock.</p>
+        <details class="owner-accordion" open>
+          <summary>
+            <div class="section-heading">
+              <span class="eyebrow">Inventory Snapshot</span>
+              <h3>Monitor Stock at a Glance</h3>
+            </div>
+            <p class="owner-accordion-subtitle">Update quantities after each shopping run.</p>
+          </summary>
+          <div class="owner-panel-body">
+            <p class="inventory-copy">Track proteins, produce, and pantry items in real time. Update counts after shopping or prep so you always know what to restock.</p>
 
-        <form id="inventory-form" class="inventory-form">
-          <label class="field">
-            <span>Item</span>
-            <input type="text" id="inventory-item" name="inventory-item" placeholder="e.g. Fresh Snapper" required />
-          </label>
-          <label class="field">
-            <span>On hand</span>
-            <input type="number" id="inventory-qty" name="inventory-qty" min="0" step="1" placeholder="e.g. 10" required />
-          </label>
-          <label class="field">
-            <span>Unit</span>
-            <input type="text" id="inventory-unit" name="inventory-unit" placeholder="lbs / trays / bottles" required />
-          </label>
-          <label class="field">
-            <span>Reorder point</span>
-            <input type="number" id="inventory-reorder" name="inventory-reorder" min="0" step="1" placeholder="e.g. 4" required />
-          </label>
-          <button type="submit" class="btn">Add Item</button>
-          <button id="inventory-reset" type="button" class="btn ghost">Reset to Defaults</button>
-        </form>
+            <form id="inventory-form" class="inventory-form">
+              <label class="field">
+                <span>Item</span>
+                <input type="text" id="inventory-item" name="inventory-item" placeholder="e.g. Fresh Snapper" required />
+              </label>
+              <label class="field">
+                <span>On hand</span>
+                <input type="number" id="inventory-qty" name="inventory-qty" min="0" step="1" placeholder="e.g. 10" required />
+              </label>
+              <label class="field">
+                <span>Unit</span>
+                <input type="text" id="inventory-unit" name="inventory-unit" placeholder="lbs / trays / bottles" required />
+              </label>
+              <label class="field">
+                <span>Reorder point</span>
+                <input type="number" id="inventory-reorder" name="inventory-reorder" min="0" step="1" placeholder="e.g. 4" required />
+              </label>
+              <button type="submit" class="btn">Add Item</button>
+              <button id="inventory-reset" type="button" class="btn ghost">Reset to Defaults</button>
+            </form>
 
-        <div class="inventory-table-wrapper">
-          <table class="inventory-table">
-            <thead>
-              <tr>
-                <th scope="col">Item</th>
-                <th scope="col">On Hand</th>
-                <th scope="col">Unit</th>
-                <th scope="col">Reorder Point</th>
-                <th scope="col">Status</th>
-                <th scope="col" class="actions">Adjust</th>
-              </tr>
-            </thead>
-            <tbody id="inventory-body"></tbody>
-          </table>
-        </div>
+            <div class="inventory-table-wrapper">
+              <table class="inventory-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">On Hand</th>
+                    <th scope="col">Unit</th>
+                    <th scope="col">Reorder Point</th>
+                    <th scope="col">Status</th>
+                    <th scope="col" class="actions">Adjust</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </details>
       </section>
 
       <section class="owner-panel survey-settings">
-        <div class="section-heading">
-          <span class="eyebrow">Survey Responses</span>
-          <h3>Where Should Survey Submissions Go?</h3>
-        </div>
-        <p class="survey-settings-copy">Choose the email inbox that should receive completed survey exports or alerts. We'll surface this address when you hook the form into your collection tool.</p>
-        <form id="survey-email-form" class="survey-email-form">
-          <label class="field">
-            <span>Survey destination email</span>
-            <input type="email" id="survey-email" name="survey-email" placeholder="e.g. surveys@carterscuisine.com" required />
-          </label>
-          <div class="survey-email-actions">
-            <button type="submit" class="btn">Save Email</button>
-            <button id="survey-email-clear" type="button" class="btn ghost">Clear</button>
+        <details class="owner-accordion" open>
+          <summary>
+            <div class="section-heading">
+              <span class="eyebrow">Survey Responses</span>
+              <h3>Where Should Survey Submissions Go?</h3>
+            </div>
+            <p class="owner-accordion-subtitle">Keep survey exports landing in the right inbox.</p>
+          </summary>
+          <div class="owner-panel-body">
+            <p class="survey-settings-copy">Choose the email inbox that should receive completed survey exports or alerts. We'll surface this address when you hook the form into your collection tool.</p>
+            <form id="survey-email-form" class="survey-email-form">
+              <label class="field">
+                <span>Survey destination email</span>
+                <input type="email" id="survey-email" name="survey-email" placeholder="e.g. surveys@carterscuisine.com" required />
+              </label>
+              <div class="survey-email-actions">
+                <button type="submit" class="btn">Save Email</button>
+                <button id="survey-email-clear" type="button" class="btn ghost">Clear</button>
+              </div>
+              <p id="survey-email-status" class="form-hint" role="status" hidden></p>
+            </form>
           </div>
-          <p id="survey-email-status" class="form-hint" role="status" hidden></p>
-        </form>
+        </details>
+      </section>
+
+      <section class="owner-panel integration-payment">
+        <details class="owner-accordion" open>
+          <summary>
+            <div class="section-heading">
+              <span class="eyebrow">Payment</span>
+              <h3>Connect PayPal Checkout</h3>
+            </div>
+            <p class="owner-accordion-subtitle">Keep totals accurate for the student checkout flow.</p>
+          </summary>
+          <div class="owner-panel-body">
+            <p class="integration-copy">Add your live PayPal credentials so online payments run smoothly. You can test with sandbox IDs, then swap to live when you are ready.</p>
+            <form id="integration-payment-form" class="integration-settings-form" novalidate>
+              <label class="field">
+                <span>PayPal client ID</span>
+                <input type="text" id="paypal-client-id" name="paypal-client-id" placeholder="Live or sandbox client ID" />
+              </label>
+              <p class="form-hint integration-note">Sandbox IDs are great for testing. Swap to your live client ID before launch.</p>
+              <label class="field">
+                <span>PayPal checkout link</span>
+                <input type="url" id="paypal-checkout-link" name="paypal-checkout-link" placeholder="https://www.paypal.com/checkout..." />
+              </label>
+              <p class="form-hint integration-note">When provided, students will see a PayPal button on their order summary that routes to this link.</p>
+              <div class="integration-actions">
+                <button type="submit" class="btn">Save Payment Settings</button>
+                <button type="button" id="integration-payment-clear" class="btn ghost">Use Defaults</button>
+              </div>
+              <p id="integration-payment-status" class="form-hint" role="status" hidden></p>
+            </form>
+          </div>
+        </details>
+      </section>
+
+      <section class="owner-panel integration-social">
+        <details class="owner-accordion" open>
+          <summary>
+            <div class="section-heading">
+              <span class="eyebrow">Social Feed</span>
+              <h3>Sync Instagram Updates</h3>
+            </div>
+            <p class="owner-accordion-subtitle">Control the handle and access token powering the homepage feed.</p>
+          </summary>
+          <div class="owner-panel-body">
+            <p class="integration-copy">Set the Instagram username students should see and include a long-lived Basic Display token if you want the latest posts to appear automatically.</p>
+            <form id="integration-social-form" class="integration-settings-form" novalidate>
+              <label class="field">
+                <span>Instagram username</span>
+                <input type="text" id="instagram-username" name="instagram-username" placeholder="carterscuisinegrenada" />
+              </label>
+              <p class="form-hint integration-note">We'll trim the @ symbol if you include it.</p>
+              <label class="field">
+                <span>Instagram access token</span>
+                <textarea id="instagram-token" name="instagram-token" rows="3" placeholder="Paste the long-lived access token from Meta's developer dashboard"></textarea>
+              </label>
+              <div class="integration-actions">
+                <button type="submit" class="btn">Save Social Settings</button>
+                <button type="button" id="integration-social-clear" class="btn ghost">Use Default Handle</button>
+              </div>
+              <p id="integration-social-status" class="form-hint" role="status" hidden></p>
+            </form>
+          </div>
+        </details>
+      </section>
+
+      <section class="owner-panel testimonial-inbox">
+        <details class="owner-accordion" open>
+          <summary>
+            <div class="section-heading">
+              <span class="eyebrow">Testimonials Inbox</span>
+              <h3>Review Student Feedback</h3>
+            </div>
+            <p class="owner-accordion-subtitle">Every testimonial submission saves here and can be emailed to the owner inbox.</p>
+          </summary>
+          <div class="owner-panel-body">
+            <p class="testimonial-inbox-copy">Keep a record of the newest testimonials, forward them to the owner email, or clear the list after archiving.</p>
+            <ul id="testimonial-inbox-list" class="testimonial-inbox-list"></ul>
+            <div class="testimonial-inbox-actions">
+              <button id="testimonial-email-owner" type="button" class="btn">Email to Owner</button>
+              <button id="testimonial-inbox-clear" type="button" class="btn ghost">Clear Inbox</button>
+            </div>
+            <p id="testimonial-inbox-status" class="form-hint" role="status" hidden></p>
+          </div>
+        </details>
       </section>
 
       <section class="owner-panel owner-media">
-        <div class="section-heading">
-          <span class="eyebrow">Menu Photos</span>
-          <h3>Swap Meal Images</h3>
-        </div>
-        <p class="owner-media-copy">Open <code>owner-media-bank</code> inside <code>Carters.html</code> to replace or add new meal pictures. Update the <code>data-meal-image</code> attribute to match the dish ID.</p>
+        <details class="owner-accordion" open>
+          <summary>
+            <div class="section-heading">
+              <span class="eyebrow">Menu Photos</span>
+              <h3>Swap Meal Images</h3>
+            </div>
+            <p class="owner-accordion-subtitle">Use matching dish IDs inside the media bank.</p>
+          </summary>
+          <div class="owner-panel-body">
+            <p class="owner-media-copy">Open <code>owner-media-bank</code> inside <code>Carters.html</code> to replace or add new meal pictures. Update the <code>data-meal-image</code> attribute to match the dish ID.</p>
+          </div>
+        </details>
       </section>
     </section>
   </main>
