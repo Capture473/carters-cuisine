@@ -238,80 +238,11 @@ main section {
 
 .auto-section {
   display: block;
+  padding: 0;
 }
 
 .auto-section:not(:first-of-type) {
   margin-top: clamp(1.5rem, 4vw, 2.5rem);
-}
-
-.auto-section summary.section-toggle-button {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  list-style: none;
-  text-decoration: none;
-  cursor: pointer;
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(26, 26, 26, 0.08);
-  padding: clamp(0.85rem, 2vw, 1.1rem) clamp(1rem, 3vw, 1.6rem);
-  background: var(--white);
-  box-shadow: var(--shadow);
-  font-weight: 600;
-  font-size: clamp(1rem, 2.5vw, 1.2rem);
-  color: var(--dark);
-  transition: background 0.2s ease, box-shadow 0.2s ease;
-}
-
-.auto-section summary::-webkit-details-marker,
-.auto-section summary::marker {
-  display: none;
-}
-
-.auto-section.is-open summary.section-toggle-button {
-  background: var(--off-white);
-  box-shadow: var(--shadow-soft);
-}
-
-.auto-section summary.section-toggle-button:focus-visible {
-  outline: 3px solid rgba(198, 40, 40, 0.35);
-  outline-offset: 3px;
-}
-
-.section-toggle-button span:first-child {
-  flex: 1;
-}
-
-.section-toggle-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  background: rgba(198, 40, 40, 0.12);
-  color: var(--red);
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.section-toggle-icon::before {
-  content: '';
-  display: block;
-  width: 0.6rem;
-  height: 0.6rem;
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
-  transform: rotate(45deg);
-  transition: transform 0.2s ease;
-}
-
-.auto-section.is-open .section-toggle-icon {
-  background: rgba(27, 94, 32, 0.12);
-  color: var(--deep-green);
-}
-
-.auto-section.is-open .section-toggle-icon::before {
-  transform: rotate(-135deg);
 }
 
 .hero {
@@ -1152,7 +1083,7 @@ main section {
   margin-bottom: 2rem;
 }
 
-.paypal-fallback {
+.pay-fallback {
   margin-top: 1rem;
   display: flex;
   justify-content: center;
@@ -1176,13 +1107,39 @@ main section {
   opacity: 0.85;
 }
 
+.collapsible-panel {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.3s ease;
+}
+
+.collapsible-panel.is-open {
+  max-height: 1000px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collapsible-panel,
+  .collapsible-panel.is-open {
+    transition: none;
+  }
+}
+
 .in-person-panel {
-  margin-top: 1.5rem;
+  margin-top: 0;
   background: rgba(27, 94, 32, 0.08);
   border-radius: var(--radius-md);
-  padding: 1.25rem 1.5rem;
   display: grid;
   gap: 0.75rem;
+  padding: 0;
+}
+
+.in-person-panel.is-open {
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem;
 }
 
 .in-person-panel h3 {
@@ -1301,12 +1258,12 @@ main section {
   font-size: 1.15rem;
 }
 
-.btn.paypal {
+.btn.pay {
   background: #ffc439;
   color: #1a1a1a;
 }
 
-.btn.paypal:hover {
+.btn.pay:hover {
   background: #e0ac00;
   color: #1a1a1a;
 }
@@ -1815,11 +1772,11 @@ textarea:focus {
   gap: 0.75rem;
 }
 
-#paypal-button-container {
+#pay-button-container {
   min-height: 60px;
 }
 
-.paypal-help {
+.pay-help {
   background: rgba(27, 94, 32, 0.08);
   border-radius: var(--radius-lg);
   padding: 1rem 1.5rem;
