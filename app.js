@@ -44,6 +44,24 @@ const DEFAULT_MEALS = [
     protein: 38,
     image: 'https://images.unsplash.com/photo-1449247709967-d4461a6a6103?auto=format&fit=crop&w=800&q=80',
   },
+  {
+    id: 'coconut-curry-goat',
+    name: 'Coconut Curry Goat',
+    description: 'Slow-braised goat in coconut curry with cassava, christophene, and turmeric rice.',
+    day: 'Day 4',
+    calories: 690,
+    protein: 44,
+    image: 'https://images.unsplash.com/photo-1543353071-873f17a7a088?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 'tamarind-wings',
+    name: 'Tamarind BBQ Wings & Plantains',
+    description: 'Sticky tamarind barbecue chicken wings with roasted plantains and garlic callaloo.',
+    day: 'Day 5',
+    calories: 640,
+    protein: 36,
+    image: 'https://images.unsplash.com/photo-1499028344343-cd173ffc68a9?auto=format&fit=crop&w=800&q=80',
+  },
 ];
 
 const DEFAULT_MEAL_PRICE_USD = 20;
@@ -121,18 +139,18 @@ const DEFAULT_INSTAGRAM_POSTS = [
 ];
 
 const DEFAULT_INTEGRATIONS = {
-  paypalClientId: '',
+  payClientId: '',
   mealPriceUsd: DEFAULT_MEAL_PRICE_USD,
-  paypalCheckoutLink: '',
+  payCheckoutLink: '',
   instagramUsername: 'carterscuisinegrenada',
   instagramToken: '',
 };
 
-const PAYPAL_CURRENCY = 'USD';
+const pay_CURRENCY = 'USD';
 const DEFAULT_OWNER_EMAIL = 'carterscuisinegrenada@gmail.com';
 
-let paypalSdkPromise = null;
-let paypalIntegrationListenerRegistered = false;
+let paySdkPromise = null;
+let payIntegrationListenerRegistered = false;
 
 const STORAGE_KEYS = {
   meals: 'cartersCuisineMeals',
@@ -147,7 +165,7 @@ const STORAGE_KEYS = {
 };
 
 const DISH_SELECT_LIMIT = { min: 3, max: 5 };
-const MENU_DAY_SEQUENCE = ['Day 1', 'Day 2', 'Day 3'];
+const MENU_DAY_SEQUENCE = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5'];
 
 let ownerImageMap = {};
 let mealState = [];
@@ -995,7 +1013,7 @@ function wireMenuManager() {
   });
 
   resetBtn.addEventListener('click', () => {
-    if (typeof window !== 'undefined' && !window.confirm('Restore the default three-day lineup? This will replace the current dishes.')) {
+    if (typeof window !== 'undefined' && !window.confirm('Restore the default meal-plan lineup? This will replace the current dishes.')) {
       return;
     }
     mealState = sortMeals(clone(DEFAULT_MEALS));
@@ -1269,7 +1287,7 @@ function wireOrderForm(state) {
       selectedDishes.length < DISH_SELECT_LIMIT.min ||
       selectedDishes.length > DISH_SELECT_LIMIT.max
     ) {
-      showError(errorMessage, `Select between ${DISH_SELECT_LIMIT.min} and ${DISH_SELECT_LIMIT.max} dishes to build your three-day plan.`);
+      showError(errorMessage, `Select between ${DISH_SELECT_LIMIT.min} and ${DISH_SELECT_LIMIT.max} dishes to build your meal plan.`);
       return;
     }
 
@@ -1848,8 +1866,8 @@ function wireIntegrationManager(state) {
   const socialForm = document.getElementById('integration-social-form');
   if (!paymentForm && !socialForm) return;
 
-  const paypalInput = document.getElementById('paypal-client-id');
-  const paypalLinkInput = document.getElementById('paypal-checkout-link');
+  const payInput = document.getElementById('pay-client-id');
+  const payLinkInput = document.getElementById('pay-checkout-link');
   const igUserInput = document.getElementById('instagram-username');
   const igTokenInput = document.getElementById('instagram-token');
   const paymentStatus = document.getElementById('integration-payment-status');
@@ -1858,11 +1876,11 @@ function wireIntegrationManager(state) {
   const socialClearBtn = document.getElementById('integration-social-clear');
 
   const hydratePayment = () => {
-    if (paypalInput) {
-      paypalInput.value = state.integrations?.paypalClientId || '';
+    if (payInput) {
+      payInput.value = state.integrations?.payClientId || '';
     }
-    if (paypalLinkInput) {
-      paypalLinkInput.value = state.integrations?.paypalCheckoutLink || '';
+    if (payLinkInput) {
+      payLinkInput.value = state.integrations?.payCheckoutLink || '';
     }
   };
 
@@ -1886,8 +1904,8 @@ function wireIntegrationManager(state) {
       event.preventDefault();
 
       const next = {
-        paypalClientId: (paypalInput?.value || '').trim(),
-        paypalCheckoutLink: (paypalLinkInput?.value || '').trim(),
+        payClientId: (payInput?.value || '').trim(),
+        payCheckoutLink: (payLinkInput?.value || '').trim(),
       };
       if (mealPriceInput) {
         const value = parseFloat(mealPriceInput.value || '');
@@ -1899,10 +1917,10 @@ function wireIntegrationManager(state) {
       refreshContactTargets(state);
       document.dispatchEvent(new CustomEvent('integrations-updated', { detail: { integrations: state.integrations } }));
 
-      const tone = next.paypalClientId ? 'success' : 'info';
-      const message = next.paypalClientId
-        ? 'Payment settings saved. Reload the payment page if you updated the PayPal client ID.'
-        : 'Saved. Add a PayPal client ID when you are ready to accept live payments.';
+      const tone = next.payClientId ? 'success' : 'info';
+      const message = next.payClientId
+        ? 'Payment settings saved. Reload the payment page if you updated the pay client ID.'
+        : 'Saved. Add a pay client ID when you are ready to accept live payments.';
       setInlineStatus(paymentStatus, message, tone);
     });
 
@@ -1914,9 +1932,9 @@ function wireIntegrationManager(state) {
     paymentClearBtn.addEventListener('click', () => {
       state.integrations = {
         ...state.integrations,
-        paypalClientId: '',
+        payClientId: '',
         mealPriceUsd: DEFAULT_MEAL_PRICE_USD,
-        paypalCheckoutLink: '',
+        payCheckoutLink: '',
       };
       saveIntegrations(state.integrations);
       hydratePayment();
@@ -2257,15 +2275,15 @@ function setupPaymentPage(state) {
     }
   };
 
-  const ensurePaypalReady = () => {
-    const paypalContainer = document.getElementById('paypal-button-container');
-    statusNode = document.getElementById('paypal-status');
+  const ensurepayReady = () => {
+    const payContainer = document.getElementById('pay-button-container');
+    statusNode = document.getElementById('pay-status');
     amountInput = document.getElementById('payment-amount');
     const amountForm = document.getElementById('payment-amount-form');
-    const fallbackContainer = document.getElementById('paypal-fallback');
-    const fallbackButton = document.getElementById('checkout-paypal-link');
+    const fallbackContainer = document.getElementById('pay-fallback');
+    const fallbackButton = document.getElementById('checkout-pay-link');
 
-    if (!paypalContainer || !statusNode) {
+    if (!payContainer || !statusNode) {
       return;
     }
 
@@ -2283,7 +2301,7 @@ function setupPaymentPage(state) {
     };
 
     showFallbackButton = () => {
-      const link = (state.integrations?.paypalCheckoutLink || '').trim();
+      const link = (state.integrations?.payCheckoutLink || '').trim();
       if (fallbackContainer && fallbackButton && link) {
         fallbackButton.href = link;
         fallbackContainer.hidden = false;
@@ -2294,14 +2312,14 @@ function setupPaymentPage(state) {
 
     hideFallbackButton();
 
-    const clientId = (state.integrations?.paypalClientId || '').trim();
+    const clientId = (state.integrations?.payClientId || '').trim();
     if (!clientIdNoticeShown) {
       if (clientId) {
-        setInlineStatus(statusNode, 'Loading secure PayPal checkout…', 'info');
+        setInlineStatus(statusNode, 'Loading secure pay checkout…', 'info');
       } else {
         setInlineStatus(
           statusNode,
-          'Sandbox checkout loaded. Add a live PayPal client ID in the Owner Portal to accept real payments.',
+          'Sandbox checkout loaded. Add a live pay client ID in the Owner Portal to accept real payments.',
           'info',
         );
       }
@@ -2319,7 +2337,7 @@ function setupPaymentPage(state) {
         setInlineStatus(statusNode, 'Enter the total confirmed with the kitchen to enable checkout.', 'info');
         return;
       }
-      setInlineStatus(statusNode, `Ready to pay $${amount.toFixed(2)} USD. Click PayPal to continue.`, 'success');
+      setInlineStatus(statusNode, `Ready to pay $${amount.toFixed(2)} USD. Click pay to continue.`, 'success');
     };
 
     if (amountInput && !amountInputWired) {
@@ -2329,17 +2347,17 @@ function setupPaymentPage(state) {
 
     updateAmountField(order);
 
-    const handlePaypalFailure = () => {
+    const handlepayFailure = () => {
       if (showFallbackButton()) {
-        setInlineStatus(statusNode, 'PayPal checkout is unavailable here. Use the Pay with PayPal button below to continue.', 'info');
+        setInlineStatus(statusNode, 'pay checkout is unavailable here. Use the Pay with pay button below to continue.', 'info');
       } else {
-        setInlineStatus(statusNode, 'PayPal could not load. Refresh or contact us to arrange payment.', 'error');
+        setInlineStatus(statusNode, 'pay could not load. Refresh or contact us to arrange payment.', 'error');
       }
     };
 
-    loadPayPalSdk(clientId || 'test', PAYPAL_CURRENCY)
+    loadpaySdk(clientId || 'test', pay_CURRENCY)
       .then(() => {
-        renderPayPalButtons(
+        renderpayButtons(
           {
             amountInput,
             order,
@@ -2352,43 +2370,47 @@ function setupPaymentPage(state) {
         );
       })
       .catch((err) => {
-        console.error('Unable to load PayPal SDK', err);
-        handlePaypalFailure();
+        console.error('Unable to load pay SDK', err);
+        handlepayFailure();
       });
 
-    if (!paypalIntegrationListenerRegistered) {
+    if (!payIntegrationListenerRegistered) {
       document.addEventListener('integrations-updated', (event) => {
         if (event?.detail?.integrations) {
           state.integrations = { ...state.integrations, ...event.detail.integrations };
           hideFallbackButton();
         }
       });
-      paypalIntegrationListenerRegistered = true;
+      payIntegrationListenerRegistered = true;
     }
   };
 
   const setSelection = (mode) => {
     const online = mode === 'online';
     if (payInPersonBtn) {
-      payInPersonBtn.classList.toggle('active', !online);
-      payInPersonBtn.setAttribute('aria-pressed', String(!online));
+      const isInPerson = !online;
+      payInPersonBtn.classList.toggle('active', isInPerson);
+      payInPersonBtn.setAttribute('aria-pressed', String(isInPerson));
+      payInPersonBtn.setAttribute('aria-expanded', String(isInPerson));
     }
     if (payOnlineBtn) {
       payOnlineBtn.classList.toggle('active', online);
       payOnlineBtn.setAttribute('aria-pressed', String(online));
+      payOnlineBtn.setAttribute('aria-expanded', String(online));
     }
     if (inPersonPanel) {
-      inPersonPanel.hidden = online;
-      inPersonPanel.setAttribute('aria-hidden', String(online));
+      const isInPerson = !online;
+      inPersonPanel.classList.toggle('is-open', isInPerson);
+      inPersonPanel.setAttribute('aria-hidden', String(!isInPerson));
     }
     if (checkoutSection) {
       checkoutSection.hidden = !online;
       checkoutSection.setAttribute('aria-hidden', String(!online));
       if (online) {
-        ensurePaypalReady();
+        ensurepayReady();
       }
     } else if (online) {
-      ensurePaypalReady();
+      ensurepayReady();
     }
   };
 
@@ -2413,36 +2435,36 @@ function setupPaymentPage(state) {
   }
 }
 
-function loadPayPalSdk(clientId, currency) {
-  if (window.paypal && typeof window.paypal.Buttons === 'function') {
-    return Promise.resolve(window.paypal);
+function loadpaySdk(clientId, currency) {
+  if (window.pay && typeof window.pay.Buttons === 'function') {
+    return Promise.resolve(window.pay);
   }
 
-  if (paypalSdkPromise) {
-    return paypalSdkPromise;
+  if (paySdkPromise) {
+    return paySdkPromise;
   }
 
-  paypalSdkPromise = new Promise((resolve, reject) => {
+  paySdkPromise = new Promise((resolve, reject) => {
     const script = document.createElement('script');
-    const url = new URL('https://www.paypal.com/sdk/js');
+    const url = new URL('https://www.pay.com/sdk/js');
     url.searchParams.set('client-id', clientId || 'test');
-    url.searchParams.set('currency', currency || PAYPAL_CURRENCY);
+    url.searchParams.set('currency', currency || pay_CURRENCY);
     url.searchParams.set('intent', 'CAPTURE');
     url.searchParams.set('components', 'buttons');
 
     script.src = url.toString();
     script.async = true;
-    script.dataset.paypalSdk = 'true';
-    script.onload = () => resolve(window.paypal);
-    script.onerror = () => reject(new Error('PayPal SDK failed to load.'));
+    script.dataset.paySdk = 'true';
+    script.onload = () => resolve(window.pay);
+    script.onerror = () => reject(new Error('pay SDK failed to load.'));
     document.head.appendChild(script);
   });
 
-  return paypalSdkPromise;
+  return paySdkPromise;
 }
 
-function renderPayPalButtons(context, setStatus) {
-  const container = document.getElementById('paypal-button-container');
+function renderpayButtons(context, setStatus) {
+  const container = document.getElementById('pay-button-container');
   if (!container) return;
 
   container.innerHTML = '';
@@ -2455,11 +2477,11 @@ function renderPayPalButtons(context, setStatus) {
     hideFallback();
   }
 
-  if (!window.paypal || typeof window.paypal.Buttons !== 'function') {
+  if (!window.pay || typeof window.pay.Buttons !== 'function') {
     if (showFallback && showFallback()) {
-      setStatus('PayPal checkout is unavailable here. Use the Pay with PayPal button below to continue.', 'info');
+      setStatus('pay checkout is unavailable here. Use the Pay with pay button below to continue.', 'info');
     } else {
-      setStatus('PayPal is not available right now. Please refresh or try again later.', 'error');
+      setStatus('pay is not available right now. Please refresh or try again later.', 'error');
     }
     return;
   }
@@ -2482,7 +2504,7 @@ function renderPayPalButtons(context, setStatus) {
   };
 
   try {
-    window.paypal.Buttons({
+    window.pay.Buttons({
       style: {
         layout: 'vertical',
         color: 'gold',
@@ -2498,19 +2520,19 @@ function renderPayPalButtons(context, setStatus) {
           }
           return actions.reject();
         }
-        setStatus('Opening PayPal…', 'info');
+        setStatus('Opening pay…', 'info');
         return actions.resolve();
       },
       createOrder(_, actions) {
         const amount = getAmount();
         if (!Number.isFinite(amount) || amount <= 0) {
           setStatus('Enter a valid payment total before checking out.', 'error');
-          throw new Error('Invalid amount for PayPal checkout.');
+          throw new Error('Invalid amount for pay checkout.');
         }
         const purchaseUnit = {
           description: buildDescription(),
           amount: {
-            currency_code: PAYPAL_CURRENCY,
+            currency_code: pay_CURRENCY,
             value: amount.toFixed(2),
           },
         };
@@ -2523,30 +2545,30 @@ function renderPayPalButtons(context, setStatus) {
         setStatus('Processing your payment…', 'info');
         if (actions?.order?.capture) {
           return actions.order.capture().then(() => {
-            setStatus('Payment received! We will reach out using your PayPal contact shortly.', 'success');
+            setStatus('Payment received! We will reach out using your pay contact shortly.', 'success');
           });
         }
-        setStatus('Payment approved! We will reach out using your PayPal contact shortly.', 'success');
+        setStatus('Payment approved! We will reach out using your pay contact shortly.', 'success');
         return Promise.resolve();
       },
       onCancel() {
         setStatus('Payment cancelled. You can try again anytime or contact us below.', 'info');
       },
       onError(err) {
-        console.error('PayPal encountered an error', err);
+        console.error('pay encountered an error', err);
         if (showFallback && showFallback()) {
-          setStatus('PayPal checkout is unavailable here. Use the Pay with PayPal button below to continue.', 'info');
+          setStatus('pay checkout is unavailable here. Use the Pay with pay button below to continue.', 'info');
         } else {
           setStatus('We could not complete the payment. Try again or reach out so we can help.', 'error');
         }
       },
     }).render(container);
   } catch (err) {
-    console.error('Unable to render PayPal buttons', err);
+    console.error('Unable to render pay buttons', err);
     if (showFallback && showFallback()) {
-      setStatus('PayPal checkout is unavailable here. Use the Pay with PayPal button below to continue.', 'info');
+      setStatus('pay checkout is unavailable here. Use the Pay with pay button below to continue.', 'info');
     } else {
-      setStatus('PayPal checkout could not initialize on this device.', 'error');
+      setStatus('pay checkout could not initialize on this device.', 'error');
     }
   }
 }
