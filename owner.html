@@ -30,7 +30,7 @@
         <span class="eyebrow">Carters Cuisine HQ</span>
         <h1>Keep Meals, Extras, and Inventory on Point</h1>
       </div>
-      <p class="owner-hero-copy">Use this secure dashboard to refresh the weekly meal photos, adjust extras, and update inventory levels before each three-day delivery cycle.</p>
+      <p class="owner-hero-copy">Use this secure dashboard to refresh the weekly meal photos, adjust extras, and update inventory levels before each meal-plan cycle.</p>
     </section>
 
     <section id="owner-login" class="owner-login">
@@ -69,7 +69,7 @@
               <span class="eyebrow">Menu Manager</span>
               <h3>Edit the Main Menu</h3>
             </div>
-            <p class="owner-accordion-subtitle">Adjust the dishes powering the public three-day lineup.</p>
+            <p class="owner-accordion-subtitle">Adjust the dishes powering the public three to five-day lineup.</p>
           </summary>
           <div class="owner-panel-body">
             <p class="menu-manager-copy">Update dish names, descriptions, or macros. Saved changes sync instantly to the student-facing menu, schedule, and order form.</p>
@@ -87,6 +87,8 @@
                     <option value="Day 1">Day 1</option>
                     <option value="Day 2">Day 2</option>
                     <option value="Day 3">Day 3</option>
+                    <option value="Day 4">Day 4</option>
+                    <option value="Day 5">Day 5</option>
                   </select>
                 </label>
                 <label class="field">
@@ -230,23 +232,23 @@
           <summary>
             <div class="section-heading">
               <span class="eyebrow">Payment</span>
-              <h3>Connect PayPal Checkout</h3>
+              <h3>Connect pay Checkout</h3>
             </div>
             <p class="owner-accordion-subtitle">Keep totals accurate for the student checkout flow.</p>
           </summary>
           <div class="owner-panel-body">
-            <p class="integration-copy">Add your live PayPal credentials so online payments run smoothly. You can test with sandbox IDs, then swap to live when you are ready.</p>
+            <p class="integration-copy">Add your live pay credentials so online payments run smoothly. You can test with sandbox IDs, then swap to live when you are ready.</p>
             <form id="integration-payment-form" class="integration-settings-form" novalidate>
               <label class="field">
-                <span>PayPal client ID</span>
-                <input type="text" id="paypal-client-id" name="paypal-client-id" placeholder="Live or sandbox client ID" />
+                <span>pay client ID</span>
+                <input type="text" id="pay-client-id" name="pay-client-id" placeholder="Live or sandbox client ID" />
               </label>
               <p class="form-hint integration-note">Sandbox IDs are great for testing. Swap to your live client ID before launch.</p>
               <label class="field">
-                <span>PayPal checkout link</span>
-                <input type="url" id="paypal-checkout-link" name="paypal-checkout-link" placeholder="https://www.paypal.com/checkout..." />
+                <span>pay checkout link</span>
+                <input type="url" id="pay-checkout-link" name="pay-checkout-link" placeholder="https://www.pay.com/checkout..." />
               </label>
-              <p class="form-hint integration-note">When provided, students will see a PayPal button on their order summary that routes to this link.</p>
+              <p class="form-hint integration-note">When provided, students will see a pay button on their order summary that routes to this link.</p>
               <div class="integration-actions">
                 <button type="submit" class="btn">Save Payment Settings</button>
                 <button type="button" id="integration-payment-clear" class="btn ghost">Use Defaults</button>
