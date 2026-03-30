@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Carters Cuisine | SGU Student Food Survey</title>
+  <title>Carters Cuisine | Community Food Survey</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet" />
@@ -14,7 +14,7 @@
     <div class="brand">
       <img class="site-logo" src="logo.png" alt="Carters Cuisine logo" />
       <span class="brand-name">Carters Cuisine</span>
-      <span class="tag">SGU Student Survey</span>
+      <span class="tag">Community Survey</span>
     </div>
     <nav class="main-nav" aria-label="Survey navigation">
       <a href="Carters.html">Back to Site</a>
@@ -27,9 +27,9 @@
     <section class="survey-hero" id="survey-top">
       <div class="section-heading">
         <span class="eyebrow">Help Shape the Menu</span>
-        <h1>SGU Student Food Preferences & Health Survey</h1>
+        <h1>Food Preferences & Healthy Eating Survey</h1>
       </div>
-      <p class="survey-intro">This quick survey helps us design meal prep plans and deliveries that fit SGU student schedules, taste buds, and nutrition goals. Answer as many questions as you like—everything is optional unless noted.</p>
+      <p class="survey-intro">This quick survey helps us design meal prep plans and deliveries that fit different schedules, taste preferences, and nutrition goals. Answer as many questions as you like; everything is optional unless noted.</p>
       <a class="btn" href="#survey">Start the Survey</a>
     </section>
 
@@ -55,12 +55,13 @@
             </div>
           </div>
           <div class="survey-group">
-            <span class="survey-label">Year at SGU</span>
+            <span class="survey-label">Which best describes your routine? (Select all that apply)</span>
             <div class="option-grid">
-              <label><input type="checkbox" name="year" value="term-1" /> Term 1</label>
-              <label><input type="checkbox" name="year" value="term-2" /> Term 2</label>
-              <label><input type="checkbox" name="year" value="term-3" /> Term 3</label>
-              <label><input type="checkbox" name="year" value="clinical" /> Clinical Years</label>
+              <label><input type="checkbox" name="routine" value="working" /> Working professional</label>
+              <label><input type="checkbox" name="routine" value="student" /> Student</label>
+              <label><input type="checkbox" name="routine" value="parent" /> Parent/caregiver</label>
+              <label><input type="checkbox" name="routine" value="active" /> Active lifestyle</label>
+              <label><input type="checkbox" name="routine" value="mixed" /> Busy/mixed schedule</label>
             </div>
           </div>
         </fieldset>
@@ -77,11 +78,11 @@
             </div>
           </div>
           <div class="survey-group">
-            <label class="survey-label">Do you usually cook, order food, or eat on campus?</label>
+            <label class="survey-label">Do you usually cook, order food, or eat out?</label>
             <div class="option-grid">
               <label><input type="radio" name="primary-source" value="cook" /> Cook myself</label>
               <label><input type="radio" name="primary-source" value="order" /> Order takeout/delivery</label>
-              <label><input type="radio" name="primary-source" value="campus" /> Eat at school cafeterias/food vendors</label>
+              <label><input type="radio" name="primary-source" value="eat-out" /> Eat at restaurants/cafes</label>
               <label><input type="radio" name="primary-source" value="mix" /> Mix of the above</label>
             </div>
           </div>
@@ -145,7 +146,7 @@
             </label>
           </div>
           <div class="survey-group">
-            <label class="survey-label" for="go-to-meals">What are your top go-to meals/snacks as a student?</label>
+            <label class="survey-label" for="go-to-meals">What are your top go-to meals or snacks?</label>
             <textarea id="go-to-meals" name="go-to-meals" rows="3" placeholder="Share your favorites"></textarea>
           </div>
           <div class="survey-group">
@@ -162,7 +163,7 @@
         <fieldset>
           <legend>Section 5: Healthy Eating</legend>
           <div class="survey-group">
-            <span class="survey-label">How important is healthy eating to you as a student?</span>
+            <span class="survey-label">How important is healthy eating to you?</span>
             <div class="option-grid">
               <label><input type="radio" name="healthy-importance" value="very" /> Very important</label>
               <label><input type="radio" name="healthy-importance" value="somewhat" /> Somewhat important</label>
@@ -187,11 +188,11 @@
             </label>
           </div>
           <div class="survey-group">
-            <span class="survey-label">What makes it challenging for you to eat healthy while at SGU?</span>
+            <span class="survey-label">What makes it challenging for you to eat healthy?</span>
             <div class="option-grid">
               <label><input type="checkbox" name="healthy-challenges" value="cost" /> Cost of healthy food</label>
-              <label><input type="checkbox" name="healthy-challenges" value="availability" /> Limited availability on campus</label>
-              <label><input type="checkbox" name="healthy-challenges" value="time" /> Lack of time to cook
+              <label><input type="checkbox" name="healthy-challenges" value="availability" /> Limited availability nearby</label>
+              <label><input type="checkbox" name="healthy-challenges" value="time" /> Lack of time to cook</label>
               <label><input type="checkbox" name="healthy-challenges" value="convenience" /> Prefer convenience/fast food</label>
               <label><input type="checkbox" name="healthy-challenges" value="other" /> Other</label>
             </div>
@@ -205,7 +206,7 @@
         <fieldset>
           <legend>Section 6: Final Thoughts</legend>
           <div class="survey-group">
-            <label class="survey-label">If SGU or local vendors offered more student-friendly healthy meal options, would you be interested?</label>
+            <label class="survey-label">If Carters Cuisine or local vendors offered more healthy meal options, would you be interested?</label>
             <div class="option-grid">
               <label><input type="radio" name="interest" value="yes" /> Yes</label>
               <label><input type="radio" name="interest" value="no" /> No</label>
@@ -213,7 +214,7 @@
             </div>
           </div>
           <div class="survey-group">
-            <label class="survey-label" for="meal-plan-preference">What kind of meal plan/service would you prefer as a student?</label>
+            <label class="survey-label" for="meal-plan-preference">What kind of meal plan or service would you prefer?</label>
             <textarea id="meal-plan-preference" name="meal-plan-preference" rows="3" placeholder="Share how we can serve you best"></textarea>
           </div>
 
@@ -250,7 +251,7 @@
           <button type="submit" class="btn">Submit Survey</button>
           <a class="btn ghost" href="Carters.html">Return to Homepage</a>
         </div>
-        <p class="survey-footnote">Thanks for sharing your preferences! We use this feedback to fine-tune menus, plan delivery windows, and build healthier options for SGU students.</p>
+        <p class="survey-footnote">Thanks for sharing your preferences. We use this feedback to fine-tune menus, plan delivery windows, and build healthier options for the wider community.</p>
       </form>
     </section>
   </main>
