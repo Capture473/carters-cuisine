@@ -103,7 +103,7 @@ const DEFAULT_INSTAGRAM_POSTS = [
   {
     id: 'ig-default-1',
     image: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?auto=format&fit=crop&w=800&q=80',
-    caption: 'Fresh jerk chicken trays heading out to SGU housing.',
+    caption: 'Fresh jerk chicken trays.',
     permalink: 'https://www.instagram.com/carterscuisinegrenada/',
   },
   {
