@@ -65,6 +65,8 @@ const DEFAULT_MEALS = [
 ];
 
 const DEFAULT_MEAL_PRICE_USD = 20;
+const STORED_MEAL_IMAGE_MAX_DIMENSION = 1280;
+const STORED_MEAL_IMAGE_QUALITY = 0.82;
 
 const DEFAULT_EXTRAS = [
   { id: 'plantain-chips', name: 'Crispy Plantain Chips', price: 6 },
@@ -84,26 +86,30 @@ const DEFAULT_INVENTORY = [
 const DEFAULT_TESTIMONIALS = [
   {
     id: 't1',
-    name: 'Kayla, Term 2',
-    message: 'Having meals dropped to my dorm keeps me from skipping study blocks. The portions fuel me all day.',
+    name: 'Danielle, Grand Anse',
+    message: 'The meal prep makes my week easier. The portions are generous, the flavor is on point, and delivery is always smooth.',
   },
   {
     id: 't2',
-    name: 'Marcus, Term 3',
-    message: 'The jerk chicken prep means one less thing to stress about during exams. Always fresh and on time.',
+    name: 'Andre, St. George',
+    message: 'I can sort lunch and dinner for a few days at once without sacrificing taste. Everything arrives fresh and well packed.',
   },
   {
     id: 't3',
-    name: 'Priya, Clinical Years',
-    message: 'Meal prep Fridays are clutch — balanced dishes that fit my schedule and taste like home.',
+    name: 'Nadia, Frequente',
+    message: 'Reliable service, balanced meals, and real Caribbean flavor. It saves me time and keeps my routine on track.',
   },
 ];
+
+const DEFAULT_TESTIMONIALS_BY_ID = Object.fromEntries(
+  DEFAULT_TESTIMONIALS.map((item) => [item.id, item]),
+);
 
 const DEFAULT_INSTAGRAM_POSTS = [
   {
     id: 'ig-default-1',
     image: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?auto=format&fit=crop&w=800&q=80',
-    caption: 'Fresh jerk chicken trays.',
+    caption: 'Fresh jerk chicken trays heading out for today\'s deliveries.',
     permalink: 'https://www.instagram.com/carterscuisinegrenada/',
   },
   {
@@ -133,7 +139,7 @@ const DEFAULT_INSTAGRAM_POSTS = [
   {
     id: 'ig-default-6',
     image: 'https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?auto=format&fit=crop&w=800&q=80',
-    caption: 'Hydration boosters in rotation for long lecture days.',
+    caption: 'Hydration boosters in rotation for busy days.',
     permalink: 'https://www.instagram.com/carterscuisinegrenada/',
   },
 ];
@@ -179,7 +185,7 @@ let testimonialRotation = {
 const OWNER_SESSION_KEY = 'cartersCuisineOwnerSession';
 const OWNER_CREDENTIALS = {
   username: 'admin@carterscuisine.com',
-  password: 'CookForSGU2024',
+  password: 'Carterscuisine2026',
 };
 
 const USD_FORMATTER = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
@@ -550,8 +556,10 @@ function loadMeals() {
 function saveMeals(meals) {
   try {
     localStorage.setItem(STORAGE_KEYS.meals, JSON.stringify(meals));
+    return true;
   } catch (err) {
     console.warn('Unable to save meals to storage', err);
+    return false;
   }
 }
 
@@ -624,6 +632,14 @@ function getMeals() {
   return Array.isArray(mealState) ? mealState : [];
 }
 
+function normalizeTestimonialName(value) {
+  const name = (value || '').trim();
+  if (!name || name === 'SGU Student') {
+    return 'Carters Customer';
+  }
+  return name;
+}
+
 function loadTestimonials() {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.testimonials);
@@ -631,11 +647,18 @@ function loadTestimonials() {
       const parsed = JSON.parse(stored);
       if (Array.isArray(parsed)) {
         return parsed.filter((item) => typeof item?.message === 'string' && item.message.trim().length)
-          .map((item) => ({
-            id: item.id || randomId(),
-            name: item.name?.trim() || 'SGU Student',
-            message: item.message.trim(),
-          }));
+          .map((item) => {
+            const defaultMatch = DEFAULT_TESTIMONIALS_BY_ID[item.id];
+            if (defaultMatch) {
+              return clone(defaultMatch);
+            }
+
+            return {
+              id: item.id || randomId(),
+              name: normalizeTestimonialName(item.name),
+              message: item.message.trim(),
+            };
+          });
       }
     }
   } catch (err) {
@@ -778,9 +801,10 @@ function renderMealGrid() {
 
 function resolveMealPhoto(meal) {
   const override = ownerImageMap[meal.id];
+  const source = (meal?.image || '').trim() || override?.src || '';
   return {
-    src: override?.src || meal.image,
-    alt: override?.alt || meal.name,
+    src: source,
+    alt: meal?.name || override?.alt || 'Meal image',
   };
 }
 
@@ -884,6 +908,69 @@ function renderOrderDishOptions() {
     .join('');
 }
 
+function isImageDataUrl(value) {
+  return typeof value === 'string' && value.startsWith('data:image/');
+}
+
+function getStoredImageDimensions(width, height, maxDimension = STORED_MEAL_IMAGE_MAX_DIMENSION) {
+  const safeWidth = Math.max(1, Math.round(Number(width) || 0));
+  const safeHeight = Math.max(1, Math.round(Number(height) || 0));
+  const largestSide = Math.max(safeWidth, safeHeight);
+
+  if (largestSide <= maxDimension) {
+    return { width: safeWidth, height: safeHeight };
+  }
+
+  const scale = maxDimension / largestSide;
+  return {
+    width: Math.max(1, Math.round(safeWidth * scale)),
+    height: Math.max(1, Math.round(safeHeight * scale)),
+  };
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(new Error('The selected image could not be read.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function loadImageElement(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error('The selected image could not be processed.'));
+    image.src = src;
+  });
+}
+
+async function storeMealImageFile(file) {
+  if (!file || typeof file !== 'object' || !String(file.type || '').startsWith('image/')) {
+    throw new Error('Choose a PNG, JPG, or WebP image to upload.');
+  }
+
+  const sourceDataUrl = await readFileAsDataUrl(file);
+  const image = await loadImageElement(sourceDataUrl);
+  const dimensions = getStoredImageDimensions(
+    image.naturalWidth || image.width,
+    image.naturalHeight || image.height,
+  );
+
+  const canvas = document.createElement('canvas');
+  canvas.width = dimensions.width;
+  canvas.height = dimensions.height;
+
+  const context = canvas.getContext('2d');
+  if (!context) {
+    throw new Error('This browser could not prepare the image for storage.');
+  }
+
+  context.drawImage(image, 0, 0, dimensions.width, dimensions.height);
+  return canvas.toDataURL('image/jpeg', STORED_MEAL_IMAGE_QUALITY);
+}
+
 function wireMenuManager() {
   const form = document.getElementById('meal-form');
   const list = document.getElementById('meal-list');
@@ -901,9 +988,14 @@ function wireMenuManager() {
   const descriptionField = form.querySelector('#meal-description');
   const caloriesField = form.querySelector('#meal-calories');
   const proteinField = form.querySelector('#meal-protein');
+  const imageUploadField = form.querySelector('#meal-image-file');
   const imageField = form.querySelector('#meal-image');
+  const imagePreview = document.getElementById('meal-image-preview');
+  const imagePreviewImg = document.getElementById('meal-image-preview-img');
+  const imagePreviewNote = document.getElementById('meal-image-preview-note');
   const defaultStatus = status.textContent;
   let statusTimer = null;
+  let previewObjectUrl = '';
 
   const setStatus = (message) => {
     if (statusTimer) {
@@ -919,10 +1011,96 @@ function wireMenuManager() {
     }
   };
 
+  const clearPreviewObjectUrl = () => {
+    if (!previewObjectUrl || typeof URL === 'undefined' || typeof URL.revokeObjectURL !== 'function') {
+      previewObjectUrl = '';
+      return;
+    }
+    URL.revokeObjectURL(previewObjectUrl);
+    previewObjectUrl = '';
+  };
+
+  const hideImagePreview = () => {
+    clearPreviewObjectUrl();
+    if (imagePreview) {
+      imagePreview.hidden = true;
+    }
+    if (imagePreviewImg) {
+      imagePreviewImg.removeAttribute('src');
+    }
+    if (imagePreviewNote) {
+      imagePreviewNote.textContent = '';
+    }
+  };
+
+  const showImagePreview = (src, note = '') => {
+    if (!imagePreview || !imagePreviewImg || !src) {
+      hideImagePreview();
+      return;
+    }
+    imagePreview.hidden = false;
+    imagePreviewImg.src = src;
+    if (imagePreviewNote) {
+      imagePreviewNote.textContent = note;
+    }
+  };
+
+  const syncImagePreview = () => {
+    const uploadedFile = imageUploadField?.files?.[0] || null;
+    const typedUrl = (imageField?.value || '').trim();
+    const existingMeal = (idField.value || '').trim()
+      ? getMeals().find((meal) => meal.id === idField.value.trim())
+      : null;
+
+    if (uploadedFile && typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
+      clearPreviewObjectUrl();
+      previewObjectUrl = URL.createObjectURL(uploadedFile);
+      showImagePreview(previewObjectUrl, 'This uploaded image will be optimized and stored locally when you save.');
+      return;
+    }
+
+    if (typedUrl) {
+      showImagePreview(typedUrl, 'This image URL will be used when you save.');
+      return;
+    }
+
+    const existingImage = (existingMeal?.image || '').trim();
+    if (existingImage) {
+      showImagePreview(
+        existingImage,
+        isImageDataUrl(existingImage)
+          ? 'This stored image is saved locally in this browser.'
+          : 'Current image preview.',
+      );
+      return;
+    }
+
+    const fallbackImage = existingMeal ? ownerImageMap[existingMeal.id]?.src || '' : '';
+    if (fallbackImage) {
+      showImagePreview(fallbackImage, 'Fallback image from the site.');
+      return;
+    }
+
+    hideImagePreview();
+  };
+
+  const persistMeals = (nextMeals, errorMessage = 'Meal changes could not be saved. Try again.') => {
+    const nextState = sortMeals(nextMeals);
+    if (!saveMeals(nextState)) {
+      setStatus(errorMessage);
+      return false;
+    }
+
+    mealState = nextState;
+    renderMeals();
+    return true;
+  };
+
   const resetForm = () => {
     form.reset();
     idField.value = '';
     cancelBtn.hidden = true;
+    hideImagePreview();
     setStatus(defaultStatus);
   };
 
@@ -933,17 +1111,37 @@ function wireMenuManager() {
     descriptionField.value = meal.description;
     caloriesField.value = meal.calories;
     proteinField.value = meal.protein;
-    imageField.value = meal.image;
+    if (imageUploadField) {
+      imageUploadField.value = '';
+    }
+    imageField.value = isImageDataUrl(meal.image) ? '' : meal.image;
     cancelBtn.hidden = false;
+    syncImagePreview();
     setStatus('Editing existing meal. Save to apply changes or cancel to discard.');
     form.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
+
+  if (imagePreviewImg) {
+    imagePreviewImg.addEventListener('error', () => {
+      if (imagePreviewNote) {
+        imagePreviewNote.textContent = 'Preview unavailable. Save a valid image file or URL to use it on the site.';
+      }
+    });
+  }
 
   cancelBtn.addEventListener('click', () => {
     resetForm();
   });
 
-  form.addEventListener('submit', (event) => {
+  if (imageUploadField) {
+    imageUploadField.addEventListener('change', syncImagePreview);
+  }
+
+  if (imageField) {
+    imageField.addEventListener('input', syncImagePreview);
+  }
+
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     if (!form.reportValidity()) {
@@ -951,13 +1149,38 @@ function wireMenuManager() {
     }
 
     const editingId = (idField.value || '').trim();
+    const existingMeal = editingId ? getMeals().find((meal) => meal.id === editingId) : null;
+    const uploadedFile = imageUploadField?.files?.[0] || null;
+    const typedImageUrl = imageField.value.trim();
+    let imageValue = (existingMeal?.image || '').trim();
+
+    if (uploadedFile) {
+      setStatus('Optimizing image and saving it locally...');
+      try {
+        imageValue = await storeMealImageFile(uploadedFile);
+      } catch (err) {
+        setStatus(err?.message || 'The image upload could not be processed.');
+        return;
+      }
+    } else if (typedImageUrl) {
+      imageValue = typedImageUrl;
+    }
+
+    if (!imageValue) {
+      setStatus('Add an image by uploading a file or pasting an image URL.');
+      if (imageUploadField) {
+        imageUploadField.focus();
+      }
+      return;
+    }
+
     const payload = {
       name: nameField.value.trim(),
       day: dayField.value,
       description: descriptionField.value.trim(),
       calories: Math.max(0, Math.round(Number(caloriesField.value))),
       protein: Math.max(0, Math.round(Number(proteinField.value))),
-      image: imageField.value.trim(),
+      image: imageValue,
     };
 
     const workingMeals = [...getMeals()];
@@ -977,11 +1200,17 @@ function wireMenuManager() {
       workingMeals.push({ id, ...payload });
     }
 
-    mealState = sortMeals(workingMeals);
-    saveMeals(mealState);
-    renderMeals();
+    if (!persistMeals(
+      workingMeals,
+      uploadedFile
+        ? 'The uploaded image is too large to store locally. Try a smaller photo or use an image URL.'
+        : 'Meal changes could not be saved. Try again.',
+    )) {
+      return;
+    }
+
     resetForm();
-    setStatus('Meal saved and synced to the site.');
+    setStatus(uploadedFile ? 'Meal and uploaded image saved to the site.' : 'Meal saved and synced to the site.');
   });
 
   list.addEventListener('click', (event) => {
@@ -1002,9 +1231,9 @@ function wireMenuManager() {
       if (typeof window !== 'undefined' && !window.confirm('Remove this meal from the public menu?')) {
         return;
       }
-      mealState = sortMeals(getMeals().filter((entry) => entry.id !== mealId));
-      saveMeals(mealState);
-      renderMeals();
+      if (!persistMeals(getMeals().filter((entry) => entry.id !== mealId))) {
+        return;
+      }
       if (idField.value === mealId) {
         resetForm();
       }
@@ -1016,9 +1245,9 @@ function wireMenuManager() {
     if (typeof window !== 'undefined' && !window.confirm('Restore the default meal-plan lineup? This will replace the current dishes.')) {
       return;
     }
-    mealState = sortMeals(clone(DEFAULT_MEALS));
-    saveMeals(mealState);
-    renderMeals();
+    if (!persistMeals(clone(DEFAULT_MEALS))) {
+      return;
+    }
     resetForm();
     setStatus('Menu restored to the default lineup.');
   });
@@ -1605,7 +1834,7 @@ function renderTestimonials(testimonials) {
   const items = (Array.isArray(testimonials) && testimonials.length ? testimonials : DEFAULT_TESTIMONIALS)
     .map((item) => ({
       id: item.id || randomId(),
-      name: item.name?.trim() || 'SGU Student',
+      name: normalizeTestimonialName(item.name),
       message: item.message?.trim() || '',
     }))
     .filter((item) => item.message.length);
@@ -1719,7 +1948,7 @@ function wireTestimonialForm(state) {
       return;
     }
 
-    const name = (nameInput.value || '').trim() || 'SGU Student';
+    const name = normalizeTestimonialName(nameInput.value);
     const newTestimonial = {
       id: randomId(),
       name,
@@ -1940,7 +2169,7 @@ function wireIntegrationManager(state) {
       hydratePayment();
       refreshContactTargets(state);
       document.dispatchEvent(new CustomEvent('integrations-updated', { detail: { integrations: state.integrations } }));
-      setInlineStatus(paymentStatus, 'Payment defaults restored. Students will now see the standard meal price.', 'info');
+      setInlineStatus(paymentStatus, 'Payment defaults restored. Customers will now see the standard meal price.', 'info');
     });
   }
 
@@ -2010,7 +2239,7 @@ function renderTestimonialInbox(state) {
 
   list.innerHTML = items
     .map((item) => {
-      const safeName = escapeHTML(item.name || 'SGU Student');
+      const safeName = escapeHTML(normalizeTestimonialName(item.name));
       const safeMessage = escapeHTML(item.message || '');
       const timestamp = item.createdAt ? new Date(item.createdAt).toISOString() : '';
       const published = formatDateTime(item.createdAt);
@@ -2054,7 +2283,7 @@ function wireTestimonialInbox(state) {
 
       const items = state.testimonialInbox.slice(0, 10);
       const lines = items.map((item, index) => {
-        const name = item.name ? item.name : 'SGU Student';
+        const name = normalizeTestimonialName(item.name);
         const message = item.message ? item.message : '';
         return `${index + 1}. ${name}\n${message}`;
       });
@@ -2173,7 +2402,7 @@ function renderOrderReview(order) {
   const startDate = escapeHTML(formatDisplayDate(order.startDate));
 
   const deliveryLabels = {
-    delivery: 'Delivery to campus',
+    delivery: 'Delivery',
     pickup: 'Pickup',
   };
   const deliveryKey = (order.delivery || '').toLowerCase();
