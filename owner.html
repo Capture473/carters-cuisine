@@ -72,7 +72,7 @@
             <p class="owner-accordion-subtitle">Adjust the dishes powering the public three to five-day lineup.</p>
           </summary>
           <div class="owner-panel-body">
-            <p class="menu-manager-copy">Update dish names, descriptions, or macros. Saved changes sync instantly to the student-facing menu, schedule, and order form.</p>
+            <p class="menu-manager-copy">Update dish names, descriptions, or macros. Saved changes sync instantly to the public menu, schedule, and order form.</p>
             <form id="meal-form" class="meal-form" novalidate>
               <input type="hidden" id="meal-id" name="meal-id" />
               <div class="meal-form-grid">
@@ -102,12 +102,21 @@
               </div>
               <label class="field">
                 <span>Description</span>
-                <textarea id="meal-description" name="meal-description" rows="3" placeholder="Add context students will see on the site." required></textarea>
+                <textarea id="meal-description" name="meal-description" rows="3" placeholder="Add context guests will see on the site." required></textarea>
               </label>
               <label class="field">
-                <span>Image URL</span>
-                <input type="url" id="meal-image" name="meal-image" placeholder="https://images..." required />
+                <span>Upload Image</span>
+                <input type="file" id="meal-image-file" name="meal-image-file" accept="image/png,image/jpeg,image/webp" />
               </label>
+              <label class="field">
+                <span>Image URL (Optional)</span>
+                <input type="url" id="meal-image" name="meal-image" placeholder="https://images..." />
+              </label>
+              <p class="form-hint">Upload a photo to store it locally in this browser, or paste an image URL if you prefer. Uploaded images are optimized before saving.</p>
+              <div id="meal-image-preview" class="meal-image-preview" hidden>
+                <img id="meal-image-preview-img" alt="Meal image preview" />
+                <p id="meal-image-preview-note" class="form-hint"></p>
+              </div>
               <p id="meal-form-status" class="form-hint">Save to add a new meal or update one you're editing.</p>
               <div class="meal-form-actions">
                 <button type="submit" class="btn">Save Meal</button>
@@ -234,7 +243,7 @@
               <span class="eyebrow">Payment</span>
               <h3>Connect pay Checkout</h3>
             </div>
-            <p class="owner-accordion-subtitle">Keep totals accurate for the student checkout flow.</p>
+            <p class="owner-accordion-subtitle">Keep totals accurate for the public checkout flow.</p>
           </summary>
           <div class="owner-panel-body">
             <p class="integration-copy">Add your live pay credentials so online payments run smoothly. You can test with sandbox IDs, then swap to live when you are ready.</p>
@@ -248,7 +257,7 @@
                 <span>pay checkout link</span>
                 <input type="url" id="pay-checkout-link" name="pay-checkout-link" placeholder="https://www.pay.com/checkout..." />
               </label>
-              <p class="form-hint integration-note">When provided, students will see a pay button on their order summary that routes to this link.</p>
+              <p class="form-hint integration-note">When provided, customers will see a pay button on their order summary that routes to this link.</p>
               <div class="integration-actions">
                 <button type="submit" class="btn">Save Payment Settings</button>
                 <button type="button" id="integration-payment-clear" class="btn ghost">Use Defaults</button>
@@ -269,7 +278,7 @@
             <p class="owner-accordion-subtitle">Control the handle and access token powering the homepage feed.</p>
           </summary>
           <div class="owner-panel-body">
-            <p class="integration-copy">Set the Instagram username students should see and include a long-lived Basic Display token if you want the latest posts to appear automatically.</p>
+            <p class="integration-copy">Set the Instagram username visitors should see and include a long-lived Basic Display token if you want the latest posts to appear automatically.</p>
             <form id="integration-social-form" class="integration-settings-form" novalidate>
               <label class="field">
                 <span>Instagram username</span>
@@ -295,7 +304,7 @@
           <summary>
             <div class="section-heading">
               <span class="eyebrow">Testimonials Inbox</span>
-              <h3>Review Student Feedback</h3>
+              <h3>Review Customer Feedback</h3>
             </div>
             <p class="owner-accordion-subtitle">Every testimonial submission saves here and can be emailed to the owner inbox.</p>
           </summary>
@@ -311,20 +320,10 @@
         </details>
       </section>
 
-      <section class="owner-panel owner-media">
-        <details class="owner-accordion" open>
-          <summary>
-            <div class="section-heading">
-              <span class="eyebrow">Menu Photos</span>
-              <h3>Swap Meal Images</h3>
-            </div>
-            <p class="owner-accordion-subtitle">Use matching dish IDs inside the media bank.</p>
-          </summary>
-          <div class="owner-panel-body">
-            <p class="owner-media-copy">Open <code>owner-media-bank</code> inside <code>Carters.html</code> to replace or add new meal pictures. Update the <code>data-meal-image</code> attribute to match the dish ID.</p>
-          </div>
-        </details>
-      </section>
+      <div class="owner-footer-note" aria-label="Menu photos note">
+        <p class="owner-footer-note-label">Menu Photos</p>
+        <p class="owner-footer-note-copy">Upload meal photos directly in the Menu Manager above. Uploaded images are stored locally in this browser, while the hidden <code>owner-media-bank</code> inside <code>Carters.html</code> now acts only as a fallback for default images.</p>
+      </div>
     </section>
   </main>
 
