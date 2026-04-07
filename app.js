@@ -256,6 +256,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   ownerImageMap = collectOwnerImages();
   setupAutoSections();
+  setupAnchorNavigation();
+  setupScrollFade();
   renderMeals();
   renderExtras(state.extras);
   renderInventory(state.inventory);
@@ -381,6 +383,125 @@ function setupAutoSections() {
         expand(container);
       }
     });
+  });
+}
+
+function setupScrollFade() {
+  if (!document.body?.classList.contains('home-page')) {
+    return;
+  }
+
+  const sections = Array.from(document.querySelectorAll('main .auto-section > section'));
+  if (!sections.length) {
+    return;
+  }
+
+  const reduceMotion = typeof window !== 'undefined'
+    && typeof window.matchMedia === 'function'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    sections.forEach((section) => section.classList.add('is-in-view'));
+    return;
+  }
+
+  sections[0]?.classList.add('is-in-view');
+  document.body.classList.add('scroll-fade-enabled');
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        entry.target.classList.toggle('is-in-view', entry.isIntersecting && entry.intersectionRatio >= 0.16);
+      });
+    },
+    {
+      threshold: [0, 0.16, 0.3, 0.45],
+      rootMargin: '-6% 0px -10% 0px',
+    },
+  );
+
+  sections.forEach((section) => observer.observe(section));
+}
+
+function setupAnchorNavigation() {
+  const topBar = document.querySelector('.top-bar');
+  const anchors = Array.from(document.querySelectorAll('a[href*="#"]'));
+
+  const getSamePageTarget = (anchor) => {
+    const href = anchor.getAttribute('href');
+    if (!href || href === '#') return null;
+
+    let url = null;
+    try {
+      url = new URL(href, window.location.href);
+    } catch (err) {
+      return null;
+    }
+
+    if (!url.hash) return null;
+    if (url.origin !== window.location.origin) return null;
+    if (url.pathname !== window.location.pathname) return null;
+
+    const id = decodeURIComponent(url.hash.slice(1));
+    if (!id) return null;
+
+    const target = document.getElementById(id);
+    return target ? { id, target } : null;
+  };
+
+  const scrollToAnchorTarget = (target, { smooth = true } = {}) => {
+    if (!target) return;
+
+    const topBarHeight = topBar ? topBar.getBoundingClientRect().height : 0;
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+    const rect = target.getBoundingClientRect();
+    const absoluteTop = window.scrollY + rect.top;
+    const sectionHeight = rect.height;
+    const topGap = 20;
+    const availableHeight = Math.max(viewportHeight - topBarHeight - topGap * 2, 0);
+
+    let top = absoluteTop - topBarHeight - topGap;
+
+    if (sectionHeight > 0 && sectionHeight <= availableHeight) {
+      const centeredOffset = (availableHeight - sectionHeight) / 2;
+      top = absoluteTop - topBarHeight - topGap - centeredOffset;
+    }
+
+    window.scrollTo({
+      top: Math.max(0, top),
+      behavior: smooth ? 'smooth' : 'auto',
+    });
+  };
+
+  anchors.forEach((anchor) => {
+    const match = getSamePageTarget(anchor);
+    if (!match) return;
+
+    anchor.addEventListener('click', (event) => {
+      event.preventDefault();
+      scrollToAnchorTarget(match.target);
+      if (window.location.hash !== `#${match.id}`) {
+        history.pushState(null, '', `#${match.id}`);
+      }
+    });
+  });
+
+  if (window.location.hash) {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    const target = id ? document.getElementById(id) : null;
+    if (target) {
+      window.requestAnimationFrame(() => {
+        scrollToAnchorTarget(target, { smooth: false });
+      });
+    }
+  }
+
+  window.addEventListener('hashchange', () => {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    const target = id ? document.getElementById(id) : null;
+    if (target) {
+      scrollToAnchorTarget(target, { smooth: false });
+    }
   });
 }
 
@@ -1410,12 +1531,7 @@ function ensureUniqueMealId(name, meals, preferredId = '') {
 
 function wireOrderForm(state) {
   const form = document.getElementById('order-form');
-  const summary = document.getElementById('order-summary');
-  const summaryText = document.getElementById('order-summary-text');
-  const whatsappLink = document.getElementById('whatsapp-link');
-  const closeButton = document.getElementById('order-summary-close');
   const errorMessage = document.getElementById('order-error');
-  const paymentLink = document.getElementById('payment-link');
   const totalsNodes = {
     container: document.getElementById('order-totals'),
     meals: document.getElementById('order-meals-total'),
@@ -1424,17 +1540,33 @@ function wireOrderForm(state) {
     extrasMeta: document.getElementById('order-extras-meta'),
     total: document.getElementById('order-grand-total'),
   };
-  const summaryTotalsNodes = {
-    container: document.getElementById('order-summary-totals'),
-    meals: document.getElementById('order-summary-meals'),
-    mealsMeta: document.getElementById('order-summary-meals-meta'),
-    extras: document.getElementById('order-summary-extras'),
-    total: document.getElementById('order-summary-total'),
+  const cartNodes = {
+    dock: document.getElementById('floating-cart'),
+    toggle: document.getElementById('cart-toggle'),
+    subtotal: document.getElementById('cart-subtotal'),
+    count: document.getElementById('cart-count'),
+    overlay: document.getElementById('cart-overlay'),
+    sidebar: document.getElementById('cart-sidebar'),
+    close: document.getElementById('cart-close'),
+    meta: document.getElementById('cart-sidebar-meta'),
+    content: document.getElementById('cart-sidebar-content'),
+    meals: document.getElementById('cart-sidebar-meals-total'),
+    mealsMeta: document.getElementById('cart-sidebar-meals-meta'),
+    extras: document.getElementById('cart-sidebar-extras-total'),
+    extrasMeta: document.getElementById('cart-sidebar-extras-meta'),
+    total: document.getElementById('cart-sidebar-total'),
+    message: document.getElementById('cart-sidebar-message'),
+    checkout: document.getElementById('cart-checkout'),
   };
-  if (!form || !summary || !summaryText || !whatsappLink || !closeButton) return;
+  if (!form) return;
 
-  const getSelectedDishIds = () => [...form.querySelectorAll('input[name="dish"]:checked')].map((input) => input.value);
-  const getSelectedExtraIds = () => [...form.querySelectorAll('input[name="extra"]:checked')].map((input) => input.value);
+  const getSelectedDishInputs = () => [...form.querySelectorAll('input[name="dish"]:checked')];
+  const getSelectedExtraInputs = () => [...form.querySelectorAll('input[name="extra"]:checked')];
+  const getSelectedDishIds = () => getSelectedDishInputs().map((input) => input.value);
+  const getSelectedExtraIds = () => getSelectedExtraInputs().map((input) => input.value);
+
+  let cartIsOpen = false;
+  let overlayHideTimer = null;
 
   const updateTotals = () => {
     const dishIds = getSelectedDishIds();
@@ -1470,95 +1602,335 @@ function wireOrderForm(state) {
     return totals;
   };
 
-  const renderSummaryTotals = (pricing) => {
-    if (!summaryTotalsNodes.container) return;
-    if (!pricing) {
-      summaryTotalsNodes.container.hidden = true;
-      return;
+  const closeCart = () => {
+    cartIsOpen = false;
+
+    if (cartNodes.toggle) {
+      cartNodes.toggle.setAttribute('aria-expanded', 'false');
     }
-    summaryTotalsNodes.container.hidden = false;
-    if (summaryTotalsNodes.meals) {
-      summaryTotalsNodes.meals.textContent = formatCurrency(pricing.mealsTotal);
+
+    if (cartNodes.sidebar) {
+      cartNodes.sidebar.classList.remove('is-open');
+      cartNodes.sidebar.setAttribute('aria-hidden', 'true');
     }
-    if (summaryTotalsNodes.mealsMeta) {
-      const perMeal = formatCurrency(pricing.mealUnit);
-      const count = pricing.mealCount || 0;
-      summaryTotalsNodes.mealsMeta.textContent = `${count} × ${perMeal}`;
+
+    if (cartNodes.overlay) {
+      cartNodes.overlay.classList.remove('is-visible');
+      if (overlayHideTimer) {
+        window.clearTimeout(overlayHideTimer);
+      }
+      overlayHideTimer = window.setTimeout(() => {
+        if (!cartIsOpen && cartNodes.overlay) {
+          cartNodes.overlay.hidden = true;
+        }
+      }, 280);
     }
-    if (summaryTotalsNodes.extras) {
-      summaryTotalsNodes.extras.textContent = formatCurrency(pricing.extrasTotal);
-    }
-    if (summaryTotalsNodes.total) {
-      summaryTotalsNodes.total.textContent = formatCurrency(pricing.total);
-    }
+
+    document.body.classList.remove('cart-open');
   };
 
-  form.addEventListener('change', (event) => {
-    if (event.target.name === 'dish') {
-      enforceDishSelectionLimit(form, errorMessage);
-    }
-    if (event.target.name === 'dish' || event.target.name === 'extra') {
-      updateTotals();
-    }
-  });
+  const openCart = () => {
+    const itemCount = Number(cartNodes.count?.textContent || 0);
+    if (!itemCount) return;
 
-  form.addEventListener('input', (event) => {
-    if (event.target.name === 'dish' || event.target.name === 'extra') {
-      updateTotals();
-    }
-  });
+    cartIsOpen = true;
 
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const selectedDishes = [...form.querySelectorAll('input[name="dish"]:checked')];
+    if (overlayHideTimer) {
+      window.clearTimeout(overlayHideTimer);
+    }
+
+    if (cartNodes.overlay) {
+      cartNodes.overlay.hidden = false;
+      window.requestAnimationFrame(() => {
+        cartNodes.overlay?.classList.add('is-visible');
+      });
+    }
+
+    if (cartNodes.sidebar) {
+      cartNodes.sidebar.classList.add('is-open');
+      cartNodes.sidebar.setAttribute('aria-hidden', 'false');
+      cartNodes.sidebar.focus();
+    }
+
+    if (cartNodes.toggle) {
+      cartNodes.toggle.setAttribute('aria-expanded', 'true');
+    }
+
+    document.body.classList.add('cart-open');
+  };
+
+  const buildCartState = () => {
+    const selectedDishes = getSelectedDishInputs();
+    const payload = compileOrderPayload(form, selectedDishes, state.extras, state.integrations);
+    const dishCount = Array.isArray(payload.dishIds) ? payload.dishIds.length : 0;
+    const extraCount = Array.isArray(payload.extraIds) ? payload.extraIds.length : 0;
+    const itemCount = dishCount + extraCount;
+    const hasRequiredFields = Boolean(
+      payload.startDate
+      && payload.delivery
+      && payload.contactMethod
+      && payload.contactInfo,
+    );
+    const canCheckout = Boolean(
+      itemCount
+      && dishCount >= DISH_SELECT_LIMIT.min
+      && dishCount <= DISH_SELECT_LIMIT.max
+      && hasRequiredFields,
+    );
+
+    let message = '';
+    let tone = 'info';
+
+    if (itemCount) {
+      if (dishCount < DISH_SELECT_LIMIT.min) {
+        const remaining = DISH_SELECT_LIMIT.min - dishCount;
+        message = `Select ${remaining} more dish${remaining === 1 ? '' : 'es'} to continue.`;
+      } else if (dishCount > DISH_SELECT_LIMIT.max) {
+        message = `You can only choose up to ${DISH_SELECT_LIMIT.max} dishes.`;
+        tone = 'error';
+      } else if (!hasRequiredFields) {
+        message = 'Add your date, delivery, and contact details.';
+      } else {
+        message = 'Ready. Pay cash or card on delivery or pickup.';
+        tone = 'success';
+      }
+    }
+
+    return {
+      payload,
+      dishCount,
+      extraCount,
+      itemCount,
+      canCheckout,
+      message,
+      tone,
+    };
+  };
+
+  const renderCart = (cartState) => {
+    const {
+      payload,
+      dishCount,
+      extraCount,
+      itemCount,
+      canCheckout,
+      message,
+      tone,
+    } = cartState;
+
+    if (cartNodes.dock) {
+      cartNodes.dock.hidden = !itemCount;
+    }
+
+    if (!itemCount) {
+      if (cartIsOpen) {
+        closeCart();
+      }
+      if (cartNodes.subtotal) cartNodes.subtotal.textContent = '$0.00 total';
+      if (cartNodes.count) cartNodes.count.textContent = '0';
+      if (cartNodes.meta) cartNodes.meta.textContent = 'Select a meal to start building your order.';
+      if (cartNodes.content) {
+        cartNodes.content.innerHTML = '<p class="cart-sidebar-empty">Select a dish to start building your order.</p>';
+      }
+      if (cartNodes.meals) cartNodes.meals.textContent = '$0.00';
+      if (cartNodes.mealsMeta) cartNodes.mealsMeta.textContent = '0 selected';
+      if (cartNodes.extras) cartNodes.extras.textContent = '$0.00';
+      if (cartNodes.extrasMeta) cartNodes.extrasMeta.textContent = 'No extras selected';
+      if (cartNodes.total) cartNodes.total.textContent = '$0.00';
+      if (cartNodes.checkout) cartNodes.checkout.disabled = true;
+      setInlineStatus(cartNodes.message, '');
+      return;
+    }
+
+    if (cartNodes.subtotal) {
+      cartNodes.subtotal.textContent = `${formatCurrency(payload.pricing.total)} total`;
+    }
+    if (cartNodes.count) {
+      cartNodes.count.textContent = String(itemCount);
+    }
+
+    if (cartNodes.meta) {
+      const parts = [];
+      if (dishCount) parts.push(`${dishCount} dish${dishCount === 1 ? '' : 'es'}`);
+      if (extraCount) parts.push(`${extraCount} extra${extraCount === 1 ? '' : 's'}`);
+      cartNodes.meta.textContent = `${parts.join(' • ')} in your cart.`;
+    }
+
+    if (cartNodes.content) {
+      const deliveryLabels = {
+        delivery: 'Delivery',
+        pickup: 'Pickup',
+      };
+      const contactLabels = {
+        whatsapp: 'WhatsApp',
+        call: 'Phone call',
+        email: 'Email',
+      };
+      const delivery = payload.delivery
+        ? deliveryLabels[(payload.delivery || '').toLowerCase()] || capitalize(payload.delivery)
+        : 'Choose delivery';
+      const contact = payload.contactMethod
+        ? contactLabels[(payload.contactMethod || '').toLowerCase()] || capitalize(payload.contactMethod)
+        : 'Choose contact method';
+      const contactSummary = payload.contactInfo ? `${contact} - ${payload.contactInfo}` : contact;
+      const dishList = payload.dishes.length
+        ? `<ol class="cart-sidebar-list">${payload.dishes.map((dish) => `<li>${escapeHTML(dish)}</li>`).join('')}</ol>`
+        : '<p class="cart-sidebar-empty">No dishes selected yet.</p>';
+      const extrasList = payload.selectedExtras.length
+        ? `<ul class="cart-sidebar-list">${payload.selectedExtras.map((extra) => `<li>${escapeHTML(extra)}</li>`).join('')}</ul>`
+        : '<p class="cart-sidebar-empty">No extras added.</p>';
+      const notesBlock = payload.notes
+        ? `<div class="cart-sidebar-section"><h3>Notes</h3><p class="cart-sidebar-note">${escapeHTML(payload.notes)}</p></div>`
+        : '';
+
+      cartNodes.content.innerHTML = `
+        <div class="cart-sidebar-detail-grid">
+          <div class="cart-sidebar-detail">
+            <span>Start date</span>
+            <strong>${escapeHTML(formatDisplayDate(payload.startDate))}</strong>
+          </div>
+          <div class="cart-sidebar-detail">
+            <span>Delivery</span>
+            <strong>${escapeHTML(delivery)}</strong>
+          </div>
+          <div class="cart-sidebar-detail">
+            <span>Contact</span>
+            <strong>${escapeHTML(contactSummary)}</strong>
+          </div>
+          <div class="cart-sidebar-detail">
+            <span>Total items</span>
+            <strong>${escapeHTML(String(itemCount))}</strong>
+          </div>
+        </div>
+        <div class="cart-sidebar-section">
+          <h3>Dishes</h3>
+          ${dishList}
+        </div>
+        <div class="cart-sidebar-section">
+          <h3>Extras</h3>
+          ${extrasList}
+        </div>
+        ${notesBlock}
+      `;
+    }
+
+    if (cartNodes.meals) {
+      cartNodes.meals.textContent = formatCurrency(payload.pricing.mealsTotal);
+    }
+    if (cartNodes.mealsMeta) {
+      cartNodes.mealsMeta.textContent = dishCount
+        ? `${dishCount} selected • ${formatCurrency(payload.pricing.mealUnit)} each`
+        : '0 selected';
+    }
+    if (cartNodes.extras) {
+      cartNodes.extras.textContent = formatCurrency(payload.pricing.extrasTotal);
+    }
+    if (cartNodes.extrasMeta) {
+      cartNodes.extrasMeta.textContent = extraCount
+        ? `${extraCount} add-on${extraCount === 1 ? '' : 's'} selected`
+        : 'No extras selected';
+    }
+    if (cartNodes.total) {
+      cartNodes.total.textContent = formatCurrency(payload.pricing.total);
+    }
+    if (cartNodes.checkout) {
+      cartNodes.checkout.disabled = !canCheckout;
+    }
+
+    setInlineStatus(cartNodes.message, message, tone);
+  };
+
+  const syncOrderState = () => {
+    updateTotals();
+    renderCart(buildCartState());
+  };
+
+  const proceedToPayment = () => {
+    const selectedDishes = getSelectedDishInputs();
 
     if (
       selectedDishes.length < DISH_SELECT_LIMIT.min ||
       selectedDishes.length > DISH_SELECT_LIMIT.max
     ) {
-      showError(errorMessage, `Select between ${DISH_SELECT_LIMIT.min} and ${DISH_SELECT_LIMIT.max} dishes to build your meal plan.`);
+      const selectionMessage = `Select between ${DISH_SELECT_LIMIT.min} and ${DISH_SELECT_LIMIT.max} dishes to build your meal plan.`;
+      showError(errorMessage, selectionMessage);
+      setInlineStatus(cartNodes.message, selectionMessage, 'error');
+      openCart();
       return;
     }
 
     if (!form.reportValidity()) {
-      showError(errorMessage, 'Fill in the required fields before reviewing.');
+      const fieldMessage = 'Fill in your date, delivery, and contact details.';
+      showError(errorMessage, fieldMessage);
+      setInlineStatus(cartNodes.message, fieldMessage, 'error');
+      openCart();
       return;
     }
 
     hideError(errorMessage);
 
     const payload = compileOrderPayload(form, selectedDishes, state.extras, state.integrations);
-    const message = formatOrderMessage(payload);
     const orderRecord = {
       ...payload,
-      summary: message,
+      summary: formatOrderMessage(payload),
     };
 
-    summaryText.textContent = message;
-    whatsappLink.href = `https://wa.me/14734153871?text=${encodeURIComponent(message)}`;
     saveLastOrder(orderRecord);
-    if (paymentLink) {
-      paymentLink.href = 'payment.html#payment-options';
-      paymentLink.hidden = false;
+    window.location.href = 'payment.html';
+  };
+
+  form.addEventListener('change', (event) => {
+    if (event.target.name === 'dish') {
+      enforceDishSelectionLimit(form, errorMessage);
     }
-    renderSummaryTotals(payload.pricing);
-    summary.hidden = false;
-    summary.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    syncOrderState();
   });
 
-  closeButton.addEventListener('click', () => {
-    summary.hidden = true;
-    window.scrollTo({ top: form.offsetTop - 100, behavior: 'smooth' });
+  form.addEventListener('input', () => {
+    syncOrderState();
+  });
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    proceedToPayment();
+  });
+
+  if (cartNodes.toggle) {
+    cartNodes.toggle.addEventListener('click', () => {
+      if (cartIsOpen) {
+        closeCart();
+      } else {
+        openCart();
+      }
+    });
+  }
+
+  if (cartNodes.close) {
+    cartNodes.close.addEventListener('click', closeCart);
+  }
+
+  if (cartNodes.overlay) {
+    cartNodes.overlay.addEventListener('click', closeCart);
+  }
+
+  if (cartNodes.checkout) {
+    cartNodes.checkout.addEventListener('click', proceedToPayment);
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && cartIsOpen) {
+      closeCart();
+    }
   });
 
   document.addEventListener('integrations-updated', (event) => {
     if (event?.detail?.integrations) {
       state.integrations = { ...state.integrations, ...event.detail.integrations };
-      updateTotals();
+      syncOrderState();
     }
   });
 
-  updateTotals();
+  syncOrderState();
 }
 
 function enforceDishSelectionLimit(form, errorMessage) {
@@ -1639,7 +2011,7 @@ function formatOrderMessage(payload) {
       'Totals:',
       `Meals subtotal: ${formatCurrency(pricing.mealsTotal)} (${mealMeta})`,
       `Extras subtotal: ${formatCurrency(pricing.extrasTotal)}`,
-      `Total to pay: ${formatCurrency(pricing.total)} USD`,
+      `Total due at delivery or pickup: ${formatCurrency(pricing.total)} USD`,
     );
   }
 
@@ -2146,10 +2518,10 @@ function wireIntegrationManager(state) {
       refreshContactTargets(state);
       document.dispatchEvent(new CustomEvent('integrations-updated', { detail: { integrations: state.integrations } }));
 
-      const tone = next.payClientId ? 'success' : 'info';
+      const tone = 'info';
       const message = next.payClientId
-        ? 'Payment settings saved. Reload the payment page if you updated the pay client ID.'
-        : 'Saved. Add a pay client ID when you are ready to accept live payments.';
+        ? 'Saved for later. Cash or card on handoff is still the live payment method.'
+        : 'Saved. Cash or card on handoff is still the live payment method.';
       setInlineStatus(paymentStatus, message, tone);
     });
 
@@ -2169,7 +2541,7 @@ function wireIntegrationManager(state) {
       hydratePayment();
       refreshContactTargets(state);
       document.dispatchEvent(new CustomEvent('integrations-updated', { detail: { integrations: state.integrations } }));
-      setInlineStatus(paymentStatus, 'Payment defaults restored. Customers will now see the standard meal price.', 'info');
+      setInlineStatus(paymentStatus, 'Defaults restored. Cash or card on handoff stays active.', 'info');
     });
   }
 
@@ -2360,7 +2732,7 @@ function renderOrderPricingSummary(order) {
 
   return `
     <div class="order-review-totals">
-      <h3>Payment summary</h3>
+      <h3>Order total</h3>
       <dl>
         <div>
           <dt>Meals</dt>
@@ -2377,7 +2749,7 @@ function renderOrderPricingSummary(order) {
           </dd>
         </div>
         <div class="order-review-total">
-          <dt>Total to pay</dt>
+          <dt>Total due</dt>
           <dd>${escapeHTML(formatCurrency(pricing.total))}</dd>
         </div>
       </dl>
