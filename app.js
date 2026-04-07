@@ -368,26 +368,28 @@ function setupMobileNavigation() {
     topBar.classList.remove('nav-open');
     toggle.setAttribute('aria-expanded', 'false');
     if (mobileQuery.matches) {
-      nav.hidden = true;
+      nav.setAttribute('aria-hidden', 'true');
     }
   };
 
   const openNav = () => {
-    nav.hidden = false;
     topBar.classList.add('nav-open');
     toggle.setAttribute('aria-expanded', 'true');
+    nav.setAttribute('aria-hidden', 'false');
   };
 
   const syncNavState = () => {
     if (mobileQuery.matches) {
       const isOpen = topBar.classList.contains('nav-open');
-      nav.hidden = !isOpen;
+      nav.hidden = false;
+      nav.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
       toggle.hidden = false;
       toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
       return;
     }
 
     nav.hidden = false;
+    nav.removeAttribute('aria-hidden');
     toggle.hidden = true;
     topBar.classList.remove('nav-open');
     toggle.setAttribute('aria-expanded', 'false');
@@ -407,6 +409,18 @@ function setupMobileNavigation() {
         closeNav();
       }
     });
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!mobileQuery.matches || !topBar.classList.contains('nav-open')) {
+      return;
+    }
+
+    if (topBar.contains(event.target)) {
+      return;
+    }
+
+    closeNav();
   });
 
   document.addEventListener('keydown', (event) => {
