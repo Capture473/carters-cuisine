@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+<body class="home-page">
   <header class="top-bar">
     <div class="brand">
       <img class="site-logo" src="logo.png" alt="Carters Cuisine logo" />
@@ -21,7 +21,7 @@
       <a href="#mission">Mission</a>
       <a href="#menu">Menu</a>
       <a href="#order">Order</a>
-      <a href="payment.html">Plans &amp; Payment</a>
+      <a href="payment.html">Payment</a>
       <a href="owner.html">Owner</a>
       <a class="cta" href="tel:14734153871">Call to Order</a>
     </nav>
@@ -32,7 +32,7 @@
       <section id="home" class="hero">
         <div class="hero-content">
           <h1>Up to 5-Day Meal Prep, Delivery &amp; Pickup</h1>
-          <p>Chef-crafted Caribbean plates are prepped in small batches and made available for local delivery or pickup. Order a three to five-day lineup, add extras, and keep your week running smoothly with meals ready when you need them.</p>
+          <p>Chef-crafted Caribbean meals for delivery or pickup. Build a three to five-day lineup, add extras, and pay cash or card on handoff.</p>
           <div class="hero-actions">
             <a class="btn" href="tel:14734153871">Tap to Order</a>
             <a class="btn ghost" href="#menu">Preview This Cycle</a>
@@ -145,13 +145,13 @@
           </article>
           <article class="order-step">
             <span class="order-step-number">3</span>
-            <h3>Confirm &amp; pay</h3>
-            <p>Review your summary, then send it via WhatsApp or call to finalize.</p>
+            <h3>Open your cart</h3>
+            <p>Your cart appears once you start selecting dishes, so you can review everything without leaving the page.</p>
           </article>
           <article class="order-step">
             <span class="order-step-number">4</span>
-            <h3>Delivery or pickup</h3>
-            <p>We arrange local delivery or pickup at your ideal time.</p>
+            <h3>Pay on handoff</h3>
+            <p>Pay cash or card on delivery or pickup.</p>
           </article>
         </div>
 
@@ -205,67 +205,83 @@
             <textarea id="order-notes" name="order-notes" rows="3" placeholder="List allergies, delivery instructions, or timing preferences."></textarea>
           </fieldset>
 
-          <div id="order-totals" class="order-totals" aria-live="polite">
-            <h3>Payment preview</h3>
-            <dl>
-              <div>
-                <dt>Meals</dt>
-                <dd>
-                  <span id="order-meals-total">$0.00</span>
-                  <small id="order-meals-meta">0 selected • $0.00 each</small>
-                </dd>
-              </div>
-              <div>
-                <dt>Extras</dt>
-                <dd>
-                  <span id="order-extras-total">$0.00</span>
-                  <small id="order-extras-meta">No extras selected</small>
-                </dd>
-              </div>
-              <div class="order-totals-grand">
-                <dt>Total to pay (USD)</dt>
-                <dd id="order-grand-total">$0.00</dd>
-              </div>
-            </dl>
-          </div>
-
-          <button type="submit" class="btn">Review Order Summary</button>
+          <p class="form-hint">Use the cart to review your order. Pay cash or card on delivery or pickup.</p>
         </form>
-
-        <div id="order-summary" class="order-summary" hidden>
-          <h3>Your order summary</h3>
-          <p class="order-summary-note">Copy the details below to message the kitchen or jump straight to secure payment when you're ready.</p>
-          <pre id="order-summary-text"></pre>
-          <div id="order-summary-totals" class="order-summary-totals" hidden>
-            <dl>
-              <div>
-                <dt>Meals</dt>
-                <dd>
-                  <span id="order-summary-meals">$0.00</span>
-                  <small id="order-summary-meals-meta"></small>
-                </dd>
-              </div>
-              <div>
-                <dt>Extras</dt>
-                <dd id="order-summary-extras">$0.00</dd>
-              </div>
-              <div class="order-summary-total">
-                <dt>Total to pay (USD)</dt>
-                <dd id="order-summary-total">$0.00</dd>
-              </div>
-            </dl>
-          </div>
-          <div class="order-summary-actions">
-            <a id="whatsapp-link" class="btn" target="_blank" rel="noopener">Send via WhatsApp</a>
-            <a id="payment-link" class="btn outline" href="payment.html#payment-options">Proceed to Payment</a>
-            <button id="order-summary-close" class="btn ghost" type="button">Make Changes</button>
-          </div>
-        </div>
       </section>
     </section>
 
-    <section class="auto-section" data-section-id="share-testimonial">
-      <section class="testimonial-submit" id="share-testimonial">
+    <section class="auto-section" data-section-id="contact">
+      <section class="cta-section" id="contact">
+        <div class="cta-card">
+          <h2>Ready to Lock Your Next Meal Plan?</h2>
+          <p>Message or call Kamal at <a href="tel:14734153871">+1 (473) 415-3871</a> and we’ll confirm your order, total, and time.</p>
+          <a class="btn" href="tel:14734153871">Order Now</a>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div id="floating-cart" class="floating-cart" hidden>
+    <button id="cart-toggle" class="floating-cart-button" type="button" aria-expanded="false" aria-controls="cart-sidebar">
+      <span class="floating-cart-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M3 4h2.2l1.3 7.1a2 2 0 0 0 2 1.6h7.4a2 2 0 0 0 2-1.6L19 7H7.1" />
+          <circle cx="10" cy="19" r="1.6" />
+          <circle cx="17" cy="19" r="1.6" />
+        </svg>
+      </span>
+      <span class="floating-cart-text">
+        <strong>Cart</strong>
+        <small id="cart-subtotal">$0.00 total</small>
+      </span>
+      <span id="cart-count" class="floating-cart-count">0</span>
+    </button>
+  </div>
+
+  <div id="cart-overlay" class="cart-overlay" hidden></div>
+
+  <aside id="cart-sidebar" class="cart-sidebar" aria-hidden="true" aria-labelledby="cart-title" aria-modal="true" role="dialog" tabindex="-1">
+    <div class="cart-sidebar-header">
+      <div>
+        <span class="eyebrow">Live cart</span>
+        <h2 id="cart-title">Your order</h2>
+      </div>
+      <button id="cart-close" class="cart-close" type="button" aria-label="Close cart">Close</button>
+    </div>
+    <p id="cart-sidebar-meta" class="cart-sidebar-meta">Select a meal to start building your order.</p>
+    <div id="cart-sidebar-content" class="cart-sidebar-content" aria-live="polite"></div>
+    <div class="cart-sidebar-totals">
+      <dl>
+        <div>
+          <dt>Meals</dt>
+          <dd>
+            <span id="cart-sidebar-meals-total">$0.00</span>
+            <small id="cart-sidebar-meals-meta">0 selected</small>
+          </dd>
+        </div>
+        <div>
+          <dt>Extras</dt>
+          <dd>
+            <span id="cart-sidebar-extras-total">$0.00</span>
+            <small id="cart-sidebar-extras-meta">No extras selected</small>
+          </dd>
+        </div>
+        <div class="cart-sidebar-grand-total">
+          <dt>Total</dt>
+          <dd id="cart-sidebar-total">$0.00</dd>
+        </div>
+      </dl>
+    </div>
+    <p id="cart-sidebar-message" class="form-hint" role="status" hidden></p>
+    <div class="cart-sidebar-actions">
+      <a class="btn ghost" href="#order">Keep Editing</a>
+      <button id="cart-checkout" class="btn" type="button">Payment Info</button>
+    </div>
+  </aside>
+
+  <footer class="footer footer-with-testimonial">
+    <div class="footer-inner">
+      <section class="testimonial-submit testimonial-footer" id="share-testimonial">
         <div class="section-heading">
           <span class="eyebrow">Share Your Experience</span>
           <h2>Add a Testimonial</h2>
@@ -285,24 +301,14 @@
           <button type="submit" class="btn">Submit Testimonial</button>
         </form>
       </section>
-    </section>
 
-    <section class="auto-section" data-section-id="contact">
-      <section class="cta-section" id="contact">
-        <div class="cta-card">
-          <h2>Ready to Lock Your Next Meal Plan?</h2>
-          <p>Message or call Kamal at <a href="tel:14734153871">+1 (473) 415-3871</a> and we'll confirm your order and delivery window.</p>
-          <a class="btn" href="tel:14734153871">Order Now</a>
+      <div class="footer-base">
+        <div class="footer-logo">
+          <img class="site-logo" src="logo.png" alt="Carters Cuisine logo" />
         </div>
-      </section>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-logo">
-      <img class="site-logo" src="logo.png" alt="Carters Cuisine logo" />
+        <p>© <span id="year"></span> Carters Cuisine. All rights reserved.</p>
+      </div>
     </div>
-    <p>© <span id="year"></span> Carters Cuisine. All rights reserved.</p>
   </footer>
 
   <script src="app.js" defer></script>
