@@ -185,7 +185,9 @@ let testimonialRotation = {
 const OWNER_SESSION_KEY = 'cartersCuisineOwnerSession';
 const OWNER_CREDENTIALS = {
   username: 'admin@carterscuisine.com',
-  password: 'Carterscuisine2026',
+  salt: 'UePxsXXgvSAdBNf7PfSBTA==',
+  iterations: 210000,
+  passwordHash: '/CzrOCc9aYptiGO1FP7tXlmprDTmbC7efh4YfijxHmM=',
 };
 
 const USD_FORMATTER = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
@@ -198,6 +200,51 @@ function normalizeCurrency(value) {
 
 function formatCurrency(amount) {
   return USD_FORMATTER.format(normalizeCurrency(amount));
+}
+
+function base64ToBytes(value) {
+  try {
+    const decoded = atob(value);
+    return Uint8Array.from(decoded, (char) => char.charCodeAt(0));
+  } catch (error) {
+    return new Uint8Array();
+  }
+}
+
+function bytesToBase64(value) {
+  const bytes = value instanceof Uint8Array ? value : new Uint8Array(value);
+  let binary = '';
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+  return btoa(binary);
+}
+
+async function verifyOwnerPassword(password) {
+  if (typeof crypto === 'undefined' || !crypto.subtle || typeof TextEncoder !== 'function') {
+    throw new Error('Secure credential verification is unavailable in this browser.');
+  }
+
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(password),
+    'PBKDF2',
+    false,
+    ['deriveBits'],
+  );
+
+  const derivedBits = await crypto.subtle.deriveBits(
+    {
+      name: 'PBKDF2',
+      hash: 'SHA-256',
+      salt: base64ToBytes(OWNER_CREDENTIALS.salt),
+      iterations: OWNER_CREDENTIALS.iterations,
+    },
+    keyMaterial,
+    256,
+  );
+
+  return bytesToBase64(derivedBits) === OWNER_CREDENTIALS.passwordHash;
 }
 
 function resolveMealUnitPrice(integrations) {
@@ -936,6 +983,7 @@ function setupOwnerPortal() {
   const logoutBtn = document.getElementById('owner-logout');
   const errorNode = document.getElementById('owner-login-error');
   const loginNavLink = document.querySelector('a[href="#owner-login"]');
+  const submitBtn = form?.querySelector('button[type="submit"]');
 
   if (!loginSection || !dashboard || !form) {
     return;
@@ -972,7 +1020,7 @@ function setupOwnerPortal() {
     unlock();
   }
 
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const username = form.querySelector('#owner-username').value.trim();
     const password = form.querySelector('#owner-password').value.trim();
@@ -982,17 +1030,30 @@ function setupOwnerPortal() {
       return;
     }
 
-    const isValid =
-      username.toLowerCase() === OWNER_CREDENTIALS.username.toLowerCase() &&
-      password === OWNER_CREDENTIALS.password;
-
-    if (!isValid) {
-      showError(errorNode, 'Those credentials do not match. Try again or contact Kamal.');
-      return;
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Checking...';
     }
 
-    sessionStorage.setItem(OWNER_SESSION_KEY, 'true');
-    unlock();
+    try {
+      const isValidUsername = username.toLowerCase() === OWNER_CREDENTIALS.username.toLowerCase();
+      const isValidPassword = isValidUsername ? await verifyOwnerPassword(password) : false;
+
+      if (!isValidUsername || !isValidPassword) {
+        showError(errorNode, 'Those credentials do not match. Try again or contact Kamal.');
+        return;
+      }
+
+      sessionStorage.setItem(OWNER_SESSION_KEY, 'true');
+      unlock();
+    } catch (error) {
+      showError(errorNode, 'Secure verification is unavailable in this browser.');
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Unlock Dashboard';
+      }
+    }
   });
 
   if (logoutBtn) {
