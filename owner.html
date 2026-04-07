@@ -36,15 +36,15 @@
     <section id="owner-login" class="owner-login">
       <div class="login-card">
         <h2>Admin Login</h2>
-        <p>Enter your owner credentials to unlock the management tools. Credentials are stored locally on this device.</p>
+        <p>Enter your owner credentials to unlock the management tools. Verification happens locally in this browser.</p>
         <form id="owner-login-form" class="owner-login-form" novalidate>
           <label class="field">
             <span>Email</span>
-            <input type="email" id="owner-username" name="owner-username" placeholder="admin@carterscuisine.com" required />
+            <input type="email" id="owner-username" name="owner-username" placeholder="admin@carterscuisine.com" autocomplete="username" required />
           </label>
           <label class="field">
             <span>Access PIN</span>
-            <input type="password" id="owner-password" name="owner-password" placeholder="Enter admin PIN" required />
+            <input type="password" id="owner-password" name="owner-password" placeholder="Enter admin PIN" autocomplete="current-password" required />
           </label>
           <p id="owner-login-error" class="form-error" role="alert" hidden></p>
           <button type="submit" class="btn">Unlock Dashboard</button>
