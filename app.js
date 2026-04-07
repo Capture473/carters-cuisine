@@ -303,6 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   ownerImageMap = collectOwnerImages();
   setupAutoSections();
+  setupMobileNavigation();
   setupAnchorNavigation();
   setupScrollFade();
   renderMeals();
@@ -331,6 +332,101 @@ function hydrateFooterYear() {
   if (yearSpan) {
     yearSpan.textContent = new Date().getFullYear();
   }
+}
+
+function setupMobileNavigation() {
+  const topBar = document.querySelector('.top-bar');
+  const nav = topBar?.querySelector('.main-nav');
+
+  if (!topBar || !nav || typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+    return;
+  }
+
+  const mobileQuery = window.matchMedia('(max-width: 780px)');
+  const navLabel = nav.getAttribute('aria-label') || 'site navigation';
+  const navId = nav.id || `nav-${document.body?.dataset?.page || document.body?.className || 'main'}`.toLowerCase().replace(/[^a-z0-9-]+/g, '-');
+  nav.id = navId;
+
+  const toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'nav-toggle';
+  toggle.setAttribute('aria-controls', navId);
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.setAttribute('aria-label', `Toggle ${navLabel.toLowerCase()}`);
+  toggle.innerHTML = `
+    <span class="nav-toggle-box" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+    <span class="nav-toggle-label">Menu</span>
+  `;
+
+  topBar.insertBefore(toggle, nav);
+
+  const closeNav = () => {
+    topBar.classList.remove('nav-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    if (mobileQuery.matches) {
+      nav.hidden = true;
+    }
+  };
+
+  const openNav = () => {
+    nav.hidden = false;
+    topBar.classList.add('nav-open');
+    toggle.setAttribute('aria-expanded', 'true');
+  };
+
+  const syncNavState = () => {
+    if (mobileQuery.matches) {
+      const isOpen = topBar.classList.contains('nav-open');
+      nav.hidden = !isOpen;
+      toggle.hidden = false;
+      toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      return;
+    }
+
+    nav.hidden = false;
+    toggle.hidden = true;
+    topBar.classList.remove('nav-open');
+    toggle.setAttribute('aria-expanded', 'false');
+  };
+
+  toggle.addEventListener('click', () => {
+    if (topBar.classList.contains('nav-open')) {
+      closeNav();
+    } else {
+      openNav();
+    }
+  });
+
+  nav.querySelectorAll('a').forEach((anchor) => {
+    anchor.addEventListener('click', () => {
+      if (mobileQuery.matches) {
+        closeNav();
+      }
+    });
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && topBar.classList.contains('nav-open')) {
+      closeNav();
+      toggle.focus();
+    }
+  });
+
+  const handleViewportChange = () => {
+    syncNavState();
+  };
+
+  if (typeof mobileQuery.addEventListener === 'function') {
+    mobileQuery.addEventListener('change', handleViewportChange);
+  } else if (typeof mobileQuery.addListener === 'function') {
+    mobileQuery.addListener(handleViewportChange);
+  }
+
+  syncNavState();
 }
 
 function setupAutoSections() {
@@ -454,20 +550,49 @@ function setupScrollFade() {
 
   sections[0]?.classList.add('is-in-view');
   document.body.classList.add('scroll-fade-enabled');
+  const topBar = document.querySelector('.top-bar');
+  let observer = null;
+  let resizeFrame = null;
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        entry.target.classList.toggle('is-in-view', entry.isIntersecting && entry.intersectionRatio >= 0.16);
-      });
-    },
-    {
-      threshold: [0, 0.16, 0.3, 0.45],
-      rootMargin: '-6% 0px -10% 0px',
-    },
-  );
+  const observeSections = () => {
+    const compactViewport = window.innerWidth <= 780;
+    const topBarHeight = topBar ? Math.round(topBar.getBoundingClientRect().height) : 0;
+    const visibleThreshold = compactViewport ? 0.1 : 0.16;
+    const topOffset = topBarHeight + (compactViewport ? 10 : 18);
 
-  sections.forEach((section) => observer.observe(section));
+    observer?.disconnect();
+    observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          entry.target.classList.toggle(
+            'is-in-view',
+            entry.isIntersecting && entry.intersectionRatio >= visibleThreshold,
+          );
+        });
+      },
+      {
+        threshold: compactViewport ? [0, 0.1, 0.2, 0.34] : [0, 0.16, 0.3, 0.45],
+        rootMargin: `-${topOffset}px 0px -${compactViewport ? 8 : 10}% 0px`,
+      },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+  };
+
+  observeSections();
+
+  const refreshObserver = () => {
+    if (resizeFrame) {
+      window.cancelAnimationFrame(resizeFrame);
+    }
+
+    resizeFrame = window.requestAnimationFrame(() => {
+      observeSections();
+    });
+  };
+
+  window.addEventListener('resize', refreshObserver);
+  window.addEventListener('orientationchange', refreshObserver);
 }
 
 function setupAnchorNavigation() {
