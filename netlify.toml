@@ -1,0 +1,8 @@
+[[redirects]]
+  from = "/owner.html"
+  to = "/owner.html"
+  status = 200
+  force = true
+
+  [redirects.headers]
+    Basic-Auth = "owner:CartersKitchen2025!"
