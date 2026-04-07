@@ -241,26 +241,26 @@
           <summary>
             <div class="section-heading">
               <span class="eyebrow">Payment</span>
-              <h3>Connect pay Checkout</h3>
+              <h3>Future Online Payment</h3>
             </div>
-            <p class="owner-accordion-subtitle">Keep totals accurate for the public checkout flow.</p>
+            <p class="owner-accordion-subtitle">Cash or card on handoff is live right now.</p>
           </summary>
           <div class="owner-panel-body">
-            <p class="integration-copy">Add your live pay credentials so online payments run smoothly. You can test with sandbox IDs, then swap to live when you are ready.</p>
+            <p class="integration-copy">Online payment is not live yet. Save future pay details here if you want them ready for later.</p>
             <form id="integration-payment-form" class="integration-settings-form" novalidate>
               <label class="field">
-                <span>pay client ID</span>
+                <span>Future pay client ID</span>
                 <input type="text" id="pay-client-id" name="pay-client-id" placeholder="Live or sandbox client ID" />
               </label>
-              <p class="form-hint integration-note">Sandbox IDs are great for testing. Swap to your live client ID before launch.</p>
+              <p class="form-hint integration-note">Save this only if you plan to turn online payment on later.</p>
               <label class="field">
-                <span>pay checkout link</span>
+                <span>Future pay link</span>
                 <input type="url" id="pay-checkout-link" name="pay-checkout-link" placeholder="https://www.pay.com/checkout..." />
               </label>
-              <p class="form-hint integration-note">When provided, customers will see a pay button on their order summary that routes to this link.</p>
+              <p class="form-hint integration-note">This is for later use only. The public site currently says cash or card on delivery or pickup.</p>
               <div class="integration-actions">
-                <button type="submit" class="btn">Save Payment Settings</button>
-                <button type="button" id="integration-payment-clear" class="btn ghost">Use Defaults</button>
+                <button type="submit" class="btn">Save Settings</button>
+                <button type="button" id="integration-payment-clear" class="btn ghost">Clear</button>
               </div>
               <p id="integration-payment-status" class="form-hint" role="status" hidden></p>
             </form>
